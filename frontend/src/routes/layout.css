@@ -1,0 +1,304 @@
+@layer theme, base, components, utilities;
+
+@import 'tailwindcss';
+@import 'tw-animate-css';
+
+@custom-variant dark (&:is(.dark *));
+
+:root {
+	--radius: 0.65rem;
+
+	/* Backdrop grid on the sign-in and landing pages. --border is tuned for
+	   1px dividers between filled surfaces and disappears on open white, so the
+	   grid gets its own, stronger token per theme. */
+	--grid-line: oklch(0.21 0.006 285 / 10%);
+
+	/* Neutral white and gray surfaces. Blue appears only as an accent:
+	   primary actions, focus rings and the active nav item. */
+	--background: oklch(1 0 0);
+	--foreground: oklch(0.21 0.006 285);
+	--card: oklch(1 0 0);
+	--card-foreground: oklch(0.21 0.006 285);
+	--popover: oklch(1 0 0);
+	--popover-foreground: oklch(0.21 0.006 285);
+	--primary: oklch(0.55 0.2 262);
+	--primary-foreground: oklch(0.985 0 0);
+	--secondary: oklch(0.967 0.001 286);
+	--secondary-foreground: oklch(0.21 0.006 285);
+	--muted: oklch(0.967 0.001 286);
+	--muted-foreground: oklch(0.552 0.014 285);
+	--accent: oklch(0.967 0.001 286);
+	--accent-foreground: oklch(0.21 0.006 285);
+	--destructive: oklch(0.58 0.23 27);
+	--destructive-foreground: oklch(0.985 0 0);
+	--success: oklch(0.62 0.16 150);
+	--border: oklch(0.92 0.004 286);
+	--input: oklch(0.92 0.004 286);
+	--ring: oklch(0.55 0.2 262);
+	--chart-1: oklch(0.55 0.2 262);
+	--chart-2: oklch(0.62 0.16 195);
+	--chart-3: oklch(0.7 0.15 145);
+	--chart-4: oklch(0.7 0.17 60);
+	--chart-5: oklch(0.62 0.23 20);
+	--sidebar: oklch(0.985 0 0);
+	--sidebar-foreground: oklch(0.21 0.006 285);
+	--sidebar-primary: oklch(0.55 0.2 262);
+	--sidebar-primary-foreground: oklch(0.985 0 0);
+	--sidebar-accent: oklch(0.955 0.002 286);
+	--sidebar-accent-foreground: oklch(0.21 0.006 285);
+	--sidebar-border: oklch(0.92 0.004 286);
+	--sidebar-ring: oklch(0.55 0.2 262);
+}
+
+.dark {
+	--grid-line: oklch(1 0 0 / 9%);
+	--background: oklch(0.141 0.005 285);
+	--foreground: oklch(0.985 0 0);
+	--card: oklch(0.21 0.006 285);
+	--card-foreground: oklch(0.985 0 0);
+	--popover: oklch(0.21 0.006 285);
+	--popover-foreground: oklch(0.985 0 0);
+	--primary: oklch(0.66 0.18 258);
+	--primary-foreground: oklch(0.21 0.006 285);
+	--secondary: oklch(0.274 0.006 286);
+	--secondary-foreground: oklch(0.985 0 0);
+	--muted: oklch(0.274 0.006 286);
+	--muted-foreground: oklch(0.705 0.015 286);
+	--accent: oklch(0.274 0.006 286);
+	--accent-foreground: oklch(0.985 0 0);
+	--destructive: oklch(0.7 0.19 22);
+	--destructive-foreground: oklch(0.985 0 0);
+	--success: oklch(0.7 0.15 150);
+	--border: oklch(1 0 0 / 10%);
+	--input: oklch(1 0 0 / 15%);
+	--ring: oklch(0.66 0.18 258);
+	--chart-1: oklch(0.66 0.18 258);
+	--chart-2: oklch(0.7 0.15 195);
+	--chart-3: oklch(0.72 0.15 145);
+	--chart-4: oklch(0.75 0.17 60);
+	--chart-5: oklch(0.68 0.22 20);
+	--sidebar: oklch(0.21 0.006 285);
+	--sidebar-foreground: oklch(0.985 0 0);
+	--sidebar-primary: oklch(0.66 0.18 258);
+	--sidebar-primary-foreground: oklch(0.21 0.006 285);
+	--sidebar-accent: oklch(0.274 0.006 286);
+	--sidebar-accent-foreground: oklch(0.985 0 0);
+	--sidebar-border: oklch(1 0 0 / 10%);
+	--sidebar-ring: oklch(0.66 0.18 258);
+}
+
+/* Paper: a warm light theme with sienna accents. Balances the set, which was
+   otherwise one light against two dark, and is easier on the eyes than pure
+   white under fluorescent lab lighting. */
+.paper {
+	--grid-line: oklch(0.27 0.026 50 / 11%);
+	--background: oklch(0.973 0.014 85);
+	--foreground: oklch(0.27 0.026 50);
+	--card: oklch(0.99 0.008 85);
+	--card-foreground: oklch(0.27 0.026 50);
+	--popover: oklch(0.99 0.008 85);
+	--popover-foreground: oklch(0.27 0.026 50);
+	--primary: oklch(0.52 0.13 42);
+	--primary-foreground: oklch(0.99 0.008 85);
+	--secondary: oklch(0.94 0.016 84);
+	--secondary-foreground: oklch(0.27 0.026 50);
+	--muted: oklch(0.94 0.016 84);
+	--muted-foreground: oklch(0.48 0.024 60);
+	--accent: oklch(0.925 0.022 80);
+	--accent-foreground: oklch(0.27 0.026 50);
+	--destructive: oklch(0.53 0.2 27);
+	--destructive-foreground: oklch(0.99 0.008 85);
+	--success: oklch(0.52 0.13 150);
+	--border: oklch(0.87 0.022 80);
+	--input: oklch(0.87 0.022 80);
+	--ring: oklch(0.52 0.13 42);
+	--chart-1: oklch(0.52 0.13 42);
+	--chart-2: oklch(0.55 0.11 175);
+	--chart-3: oklch(0.52 0.13 150);
+	--chart-4: oklch(0.62 0.13 85);
+	--chart-5: oklch(0.5 0.16 15);
+	--sidebar: oklch(0.955 0.018 84);
+	--sidebar-foreground: oklch(0.27 0.026 50);
+	--sidebar-primary: oklch(0.52 0.13 42);
+	--sidebar-primary-foreground: oklch(0.99 0.008 85);
+	--sidebar-accent: oklch(0.915 0.024 80);
+	--sidebar-accent-foreground: oklch(0.27 0.026 50);
+	--sidebar-border: oklch(0.87 0.022 80);
+	--sidebar-ring: oklch(0.52 0.13 42);
+}
+
+/* Tech: a deep blue-slate console with a cyan accent. Carries `.dark` as well,
+   so it inherits every dark-mode component rule and only retints the tokens. */
+.tech {
+	--grid-line: oklch(0.82 0.08 200 / 14%);
+	--background: oklch(0.19 0.03 250);
+	--foreground: oklch(0.96 0.01 220);
+	--card: oklch(0.24 0.035 250);
+	--card-foreground: oklch(0.96 0.01 220);
+	--popover: oklch(0.24 0.035 250);
+	--popover-foreground: oklch(0.96 0.01 220);
+	--primary: oklch(0.78 0.15 195);
+	--primary-foreground: oklch(0.19 0.03 250);
+	--secondary: oklch(0.3 0.035 250);
+	--secondary-foreground: oklch(0.96 0.01 220);
+	--muted: oklch(0.29 0.032 250);
+	--muted-foreground: oklch(0.73 0.03 220);
+	--accent: oklch(0.31 0.04 245);
+	--accent-foreground: oklch(0.96 0.01 220);
+	--destructive: oklch(0.7 0.19 20);
+	--destructive-foreground: oklch(0.19 0.03 250);
+	--success: oklch(0.78 0.16 165);
+	--border: oklch(0.82 0.08 200 / 18%);
+	--input: oklch(0.82 0.08 200 / 24%);
+	--ring: oklch(0.78 0.15 195);
+	--chart-1: oklch(0.78 0.15 195);
+	--chart-2: oklch(0.78 0.16 165);
+	--chart-3: oklch(0.72 0.15 260);
+	--chart-4: oklch(0.8 0.16 90);
+	--chart-5: oklch(0.7 0.2 20);
+	--sidebar: oklch(0.16 0.028 252);
+	--sidebar-foreground: oklch(0.96 0.01 220);
+	--sidebar-primary: oklch(0.78 0.15 195);
+	--sidebar-primary-foreground: oklch(0.19 0.03 250);
+	--sidebar-accent: oklch(0.27 0.04 248);
+	--sidebar-accent-foreground: oklch(0.96 0.01 220);
+	--sidebar-border: oklch(0.82 0.08 200 / 16%);
+	--sidebar-ring: oklch(0.78 0.15 195);
+}
+
+/* Contrast: black surfaces, white text, amber accents and heavier borders.
+   Meant for a projector in a bright room, where the neutral grays of the other
+   themes wash out, and doubles as the accessible option. Carries `.dark`. */
+.contrast {
+	--grid-line: oklch(1 0 0 / 18%);
+	--background: oklch(0 0 0);
+	--foreground: oklch(1 0 0);
+	--card: oklch(0.13 0 0);
+	--card-foreground: oklch(1 0 0);
+	--popover: oklch(0.13 0 0);
+	--popover-foreground: oklch(1 0 0);
+	--primary: oklch(0.86 0.19 95);
+	--primary-foreground: oklch(0 0 0);
+	--secondary: oklch(0.24 0 0);
+	--secondary-foreground: oklch(1 0 0);
+	--muted: oklch(0.22 0 0);
+	--muted-foreground: oklch(0.86 0 0);
+	--accent: oklch(0.28 0 0);
+	--accent-foreground: oklch(1 0 0);
+	--destructive: oklch(0.72 0.22 25);
+	--destructive-foreground: oklch(0 0 0);
+	--success: oklch(0.82 0.2 145);
+	--border: oklch(1 0 0 / 45%);
+	--input: oklch(1 0 0 / 55%);
+	--ring: oklch(0.86 0.19 95);
+	--chart-1: oklch(0.86 0.19 95);
+	--chart-2: oklch(0.82 0.2 145);
+	--chart-3: oklch(0.78 0.16 235);
+	--chart-4: oklch(0.75 0.2 330);
+	--chart-5: oklch(0.72 0.22 25);
+	--sidebar: oklch(0.07 0 0);
+	--sidebar-foreground: oklch(1 0 0);
+	--sidebar-primary: oklch(0.86 0.19 95);
+	--sidebar-primary-foreground: oklch(0 0 0);
+	--sidebar-accent: oklch(0.24 0 0);
+	--sidebar-accent-foreground: oklch(1 0 0);
+	--sidebar-border: oklch(1 0 0 / 45%);
+	--sidebar-ring: oklch(0.86 0.19 95);
+}
+
+@theme inline {
+	--font-sans: 'Inter Variable', ui-sans-serif, system-ui, sans-serif;
+	--font-display: 'Manrope Variable', 'Inter Variable', ui-sans-serif, sans-serif;
+	--font-mono: 'Geist Mono Variable', ui-monospace, 'SFMono-Regular', monospace;
+
+	--radius-sm: calc(var(--radius) - 4px);
+	--radius-md: calc(var(--radius) - 2px);
+	--radius-lg: var(--radius);
+	--radius-xl: calc(var(--radius) + 4px);
+
+	--color-background: var(--background);
+	--color-foreground: var(--foreground);
+	--color-card: var(--card);
+	--color-card-foreground: var(--card-foreground);
+	--color-popover: var(--popover);
+	--color-popover-foreground: var(--popover-foreground);
+	--color-primary: var(--primary);
+	--color-primary-foreground: var(--primary-foreground);
+	--color-secondary: var(--secondary);
+	--color-secondary-foreground: var(--secondary-foreground);
+	--color-muted: var(--muted);
+	--color-muted-foreground: var(--muted-foreground);
+	--color-accent: var(--accent);
+	--color-accent-foreground: var(--accent-foreground);
+	--color-destructive: var(--destructive);
+	--color-destructive-foreground: var(--destructive-foreground);
+	--color-success: var(--success);
+	--color-border: var(--border);
+	--color-input: var(--input);
+	--color-ring: var(--ring);
+	--color-chart-1: var(--chart-1);
+	--color-chart-2: var(--chart-2);
+	--color-chart-3: var(--chart-3);
+	--color-chart-4: var(--chart-4);
+	--color-chart-5: var(--chart-5);
+	--color-sidebar: var(--sidebar);
+	--color-sidebar-foreground: var(--sidebar-foreground);
+	--color-sidebar-primary: var(--sidebar-primary);
+	--color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+	--color-sidebar-accent: var(--sidebar-accent);
+	--color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+	--color-sidebar-border: var(--sidebar-border);
+	--color-sidebar-ring: var(--sidebar-ring);
+
+	--animate-accordion-down: accordion-down 0.2s ease-out;
+	--animate-accordion-up: accordion-up 0.2s ease-out;
+
+	@keyframes accordion-down {
+		from {
+			height: 0;
+		}
+		to {
+			height: var(--bits-accordion-content-height);
+		}
+	}
+
+	@keyframes accordion-up {
+		from {
+			height: var(--bits-accordion-content-height);
+		}
+		to {
+			height: 0;
+		}
+	}
+}
+
+@layer base {
+	* {
+		@apply border-border outline-ring/50;
+	}
+	body {
+		@apply bg-background text-foreground font-sans;
+	}
+
+	/* Chrome paints an autofilled or hovered-suggestion field with its own
+	   background and text colour, which ignores the theme and flashes white.
+	   Clipping that paint to the glyphs leaves the field's real background
+	   showing, and the fill colour keeps the text readable in every theme. */
+	input:-webkit-autofill,
+	input:-webkit-autofill:hover,
+	input:-webkit-autofill:focus,
+	input:-webkit-autofill:active,
+	textarea:-webkit-autofill,
+	textarea:-webkit-autofill:hover,
+	textarea:-webkit-autofill:focus,
+	select:-webkit-autofill,
+	select:-webkit-autofill:hover,
+	select:-webkit-autofill:focus {
+		-webkit-background-clip: text;
+		background-clip: text;
+		-webkit-text-fill-color: var(--foreground);
+		caret-color: var(--foreground);
+		/* Belt and braces for older Chromium, which ignores background-clip here. */
+		transition: background-color 100000s ease-in-out 0s;
+	}
+}

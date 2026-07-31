@@ -1,0 +1,117 @@
+# ---------------------------------------------------------------- secrets --
+# Real credentials and real people's data. Nothing in here is ever publishable.
+# Copy backend/.env.example to backend/.env and fill it in locally instead.
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+*.jks
+*.keystore
+service-account*.json
+google-service-account*.json
+credentials.json
+client_secret*.json
+secrets.json
+
+# The audit trail holds password hashes, phone numbers and fingerprint tokens.
+*.db
+*.db-shm
+*.db-wal
+*.sqlite
+*.sqlite3
+*.sqlite-journal
+
+# Photos people attached to a checkout.
+uploads/
+backend/uploads/
+
+# ------------------------------------------------------------------- rust --
+target/
+**/*.rs.bk
+*.pdb
+
+# ---------------------------------------------------------- node / svelte --
+node_modules/
+.svelte-kit/
+build/
+dist/
+.output/
+.vercel/
+.netlify/
+.wrangler/
+vite.config.js.timestamp-*
+vite.config.ts.timestamp-*
+
+# Package manager noise. The lockfiles themselves are committed on purpose.
+.pnpm-store/
+.yarn/cache/
+.yarn/install-state.gz
+.npm/
+
+# ------------------------------------------------------------------ tests --
+/test-results/
+/playwright-report/
+/playwright/.cache/
+/blob-report/
+coverage/
+*.lcov
+
+# --------------------------------------------------------------- firmware --
+# Arduino build output, and anything holding a device secret.
+build/
+*.hex
+*.elf
+*.bin
+.pio/
+.pioenvs/
+.piolibdeps/
+
+# ------------------------------------------------------------------ cad --
+# Generated models and renders; the .scad sources are what belongs in git.
+visualize/**/out/
+*.stl
+*.step
+*.stp
+*.3mf
+*.gltf
+*.glb
+
+# ------------------------------------------------------------------ logs --
+*.log
+logs/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# --------------------------------------------------------------- editors --
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json.example
+.idea/
+*.swp
+*.swo
+*~
+*.bak
+*.orig
+*.rej
+
+# ----------------------------------------------------------------- os --
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# ------------------------------------------------------------- scratch --
+tmp/
+temp/
+scratch/
+*.tmp
