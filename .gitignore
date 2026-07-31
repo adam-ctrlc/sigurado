@@ -52,10 +52,10 @@ vite.config.ts.timestamp-*
 .npm/
 
 # ------------------------------------------------------------------ tests --
-/test-results/
-/playwright-report/
-/playwright/.cache/
-/blob-report/
+test-results/
+playwright-report/
+playwright/.cache/
+blob-report/
 coverage/
 *.lcov
 
@@ -91,17 +91,75 @@ yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 
-# --------------------------------------------------------------- editors --
-.vscode/*
-!.vscode/extensions.json
-!.vscode/settings.json.example
+# ----------------------------------------------------- editors and IDEs --
+# A pattern with a slash in the middle is anchored to this file's directory, so
+# these are written without one and match at any depth.
+
+# VS Code and the editors built on it
+.vscode/
+.vscode-test/
+.history/
+.cursor/
+.cursorignore
+.cursorrules
+.windsurf/
+.continue/
+.aider*
+
+# JetBrains: IDEA, WebStorm, CLion, RustRover, PyCharm, Fleet
 .idea/
+.fleet/
+*.iml
+*.ipr
+*.iws
+out/
+cmake-build-*/
+
+# Visual Studio and Visual Studio for Mac
+.vs/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+*.userprefs
+
+# Zed, Sublime, TextMate, Eclipse, NetBeans, Kate
+.zed/
+*.sublime-project
+*.sublime-workspace
+.tm_properties
+.project
+.classpath
+.settings/
+nbproject/
+.kateproject
+.kdev4/
+
+# Vim, Emacs, Nano and friends
 *.swp
 *.swo
+*.swn
 *~
+.*.sw[a-p]
+Session.vim
+Sessionx.vim
+.netrwhist
+tags
+\#*\#
+.\#*
+.dir-locals.el
+.nano_history
+
+# Xcode
+xcuserdata/
+*.xcworkspace/xcuserdata/
+DerivedData/
+
+# Merge and backup leftovers
 *.bak
 *.orig
 *.rej
+*.old
 
 # ----------------------------------------------------------------- os --
 .DS_Store
