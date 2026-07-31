@@ -69,6 +69,10 @@ build/
 .pioenvs/
 .piolibdeps/
 
+# ------------------------------------------------------------- schedule --
+# Project planning documents, kept locally rather than published.
+visualize/gantt_chart/
+
 # ------------------------------------------------------------------ cad --
 # Generated models and renders; the .scad sources are what belongs in git.
 visualize/**/out/
