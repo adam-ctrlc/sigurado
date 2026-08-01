@@ -51,8 +51,8 @@ ENDORSERS: tuple[Signatory, ...] = (
 def story(width: float) -> list[Flowable]:
     out: list[Flowable] = []
     out.extend(layout.title_block(FORM_NAME, PURPOSE))
-    out.append(layout.identity_block(width, extra=(("Date of defense", ""),)))
-    out.append(Spacer(1, 14))
+    out.extend(layout.identity_block(width, extra=(("Date of defense", ""),)))
+    out.append(Spacer(1, 18))
 
     out.append(layout.heading("Endorsement"))
     out.append(
@@ -69,12 +69,12 @@ def story(width: float) -> list[Flowable]:
     out.extend(layout.signature_block(ENDORSERS, width))
 
     out.append(Spacer(1, 6))
-    out.append(layout.heading("Verdict of the panel"))
     out.append(
         layout.data_table(
             ["Mark one", "Verdict"],
-            [["[    ]", verdict] for verdict in VERDICTS],
-            [width * 0.12, width * 0.88],
+            [["[      ]", verdict] for verdict in VERDICTS],
+            [width * 0.18, width * 0.82],
+            title="Verdict of the panel",
         )
     )
     out.append(Spacer(1, 8))

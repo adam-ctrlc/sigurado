@@ -95,35 +95,35 @@ PARTIES: tuple[Signatory, ...] = (
 def story(width: float) -> list[Flowable]:
     out: list[Flowable] = []
     out.extend(layout.title_block(FORM_NAME, PURPOSE))
-    out.append(
+    out.extend(
         layout.identity_block(
             width, extra=(("Turnover date", ""), ("Location or room", ""))
         )
     )
-    out.append(Spacer(1, 12))
+    out.append(Spacer(1, 16))
 
     out.append(Paragraph(STATEMENT.format(title=PROJECT.title), BODY))
     out.append(Spacer(1, 10))
 
-    out.append(layout.heading("Acceptance criteria"))
     out.append(
         layout.data_table(
-            ["No.", "Criterion", "Met", "Not met", "Remarks"],
+            ["No.", "Criterion", "Met", "Remarks"],
             [
-                [str(i), f"<b>{name}</b><br/>{detail}", "[  ]", "[  ]", ""]
+                [str(i), f"<b>{name}</b><br/>{detail}", "Yes [  ]<br/>No [  ]", ""]
                 for i, (name, detail) in enumerate(CRITERIA, start=1)
             ],
-            [width * 0.05, width * 0.45, width * 0.07, width * 0.08, width * 0.35],
+            [width * 0.07, width * 0.48, width * 0.15, width * 0.30],
+            title="Acceptance criteria",
         )
     )
     out.append(Spacer(1, 10))
 
-    out.append(layout.heading("Items turned over"))
     out.append(
         layout.data_table(
-            ["Item", "Quantity", "Serial or tag", "Condition"],
+            ["Item", "Qty", "Serial or tag", "Condition"],
             [[name, qty, "", ""] for name, qty in TURNED_OVER],
-            [width * 0.48, width * 0.12, width * 0.20, width * 0.20],
+            [width * 0.46, width * 0.10, width * 0.24, width * 0.20],
+            title="Items turned over",
             blank_rows=3,
         )
     )

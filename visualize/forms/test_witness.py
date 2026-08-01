@@ -127,44 +127,37 @@ WITNESSES: tuple[Signatory, ...] = (
 def story(width: float) -> list[Flowable]:
     out: list[Flowable] = []
     out.extend(layout.title_block(FORM_NAME, PURPOSE))
-    out.append(
+    out.extend(
         layout.identity_block(
             width, extra=(("Firmware version", ""), ("Test location", ""))
         )
     )
-    out.append(Spacer(1, 10))
+    out.append(Spacer(1, 16))
 
-    header = ["Ref.", "Case and steps", "Expected result", "Pass", "Fail", "Observed"]
-    widths = [
-        width * 0.05,
-        width * 0.28,
-        width * 0.27,
-        width * 0.05,
-        width * 0.05,
-        width * 0.30,
-    ]
+    header = ["Ref.", "Case, steps and expected result", "Result", "Observed"]
+    widths = [width * 0.08, width * 0.46, width * 0.15, width * 0.31]
     rows = [
         [
             case.reference,
-            f"<b>{case.title}</b><br/>{case.steps}",
-            case.expected,
-            "[  ]",
-            "[  ]",
+            f"<b>{case.title}</b><br/>{case.steps}<br/>"
+            f"<b>Expected:</b> {case.expected}",
+            "Pass [  ]<br/>Fail [  ]",
             "",
         ]
         for case in CASES
     ]
 
-    out.append(layout.heading("Test cases"))
-    out.append(layout.data_table(header, rows, widths, blank_rows=2))
+    out.append(
+        layout.data_table(header, rows, widths, title="Test cases", blank_rows=2)
+    )
     out.append(Spacer(1, 8))
 
-    out.append(layout.heading("Summary"))
     out.append(
         layout.data_table(
-            ["Cases run", "Passed", "Failed", "Retest scheduled"],
+            ["Cases run", "Passed", "Failed", "Retest on"],
             [["", "", "", ""]],
             [width * 0.25] * 4,
+            title="Summary",
         )
     )
     out.append(Spacer(1, 10))
@@ -186,7 +179,7 @@ def story(width: float) -> list[Flowable]:
 
 def main() -> None:
     path = output_dir() / "Sigurado_Test_Witness_Sheet.pdf"
-    doc = FormDoc(path, form_name=FORM_NAME, orientation="landscape")
+    doc = FormDoc(path, form_name=FORM_NAME)
     build(doc, story(doc.width))
     print(f"Saved {path.name} ({len(CASES)} cases)")
 

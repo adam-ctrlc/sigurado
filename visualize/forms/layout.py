@@ -1,19 +1,24 @@
 """The shared furniture every form is built from.
 
-Short bond, conservative margins, one typeface, and a footer that says which
-script produced the page. Forms differ in their tables, not in their look.
+One typeface and one size: Arial 12, everywhere, including headings and table
+cells. Emphasis is carried by weight and case, never by size. Portrait letter,
+no footer, and generous space to write in.
+
+Twelve point is large for a form, so every table here is deliberately narrow:
+four or five columns is the most that stays readable across 7.3 inches. Detail
+that would need a sixth column is stacked inside a cell instead.
 """
 
 from collections.abc import Sequence
 from pathlib import Path
-from typing import Literal
 
 from reportlab.lib import colors
 from reportlab.lib.enums import TA_CENTER, TA_LEFT
-from reportlab.lib.pagesizes import letter, landscape
+from reportlab.lib.pagesizes import letter
 from reportlab.lib.styles import ParagraphStyle
 from reportlab.lib.units import inch
-from reportlab.pdfgen.canvas import Canvas
+from reportlab.pdfbase import pdfmetrics
+from reportlab.pdfbase.ttfonts import TTFont
 from reportlab.platypus import (
     BaseDocTemplate,
     Flowable,
@@ -27,59 +32,111 @@ from reportlab.platypus import (
 
 from project import PROJECT, Signatory
 
-FONT = "Helvetica"
-FONT_BOLD = "Helvetica-Bold"
+# Arial is not one of the fonts built into PDF, so it has to be found on the
+# machine. These are where it lives on Windows, macOS, and a Linux box with the
+# Microsoft fonts installed.
+_ARIAL_CANDIDATES: tuple[tuple[str, tuple[str, ...]], ...] = (
+    (
+        "Arial",
+        (
+            r"C:\Windows\Fonts\arial.ttf",
+            "/Library/Fonts/Arial.ttf",
+            "/usr/share/fonts/truetype/msttcorefonts/Arial.ttf",
+        ),
+    ),
+    (
+        "Arial-Bold",
+        (
+            r"C:\Windows\Fonts\arialbd.ttf",
+            "/Library/Fonts/Arial Bold.ttf",
+            "/usr/share/fonts/truetype/msttcorefonts/Arial_Bold.ttf",
+        ),
+    ),
+)
 
-INK = colors.HexColor("#111111")
-RULE = colors.HexColor("#666666")
-HAIRLINE = colors.HexColor("#BBBBBB")
-BAND = colors.HexColor("#EFEFEF")
 
-MARGIN = 0.55 * inch
-Orientation = Literal["portrait", "landscape"]
+def _register_arial() -> tuple[str, str]:
+    """Registers Arial, or falls back to the metrically identical Helvetica."""
+    found: list[str] = []
+    for name, paths in _ARIAL_CANDIDATES:
+        for path in paths:
+            if Path(path).exists():
+                pdfmetrics.registerFont(TTFont(name, path))
+                found.append(name)
+                break
+
+    if len(found) == 2:
+        pdfmetrics.registerFontFamily("Arial", normal="Arial", bold="Arial-Bold")
+        return "Arial", "Arial-Bold"
+
+    print("Arial was not found on this machine; using Helvetica, which shares its metrics.")
+    return "Helvetica", "Helvetica-Bold"
+
+
+FONT, FONT_BOLD = _register_arial()
+
+SIZE = 12
+"""Every piece of text on every form. Nothing is smaller and nothing is larger."""
+
+LEADING = 15.5
+
+INK = colors.HexColor("#000000")
+RULE = colors.HexColor("#555555")
+HAIRLINE = colors.HexColor("#999999")
+BAND = colors.HexColor("#E8E8E8")
+
+MARGIN = 0.6 * inch
 
 TITLE = ParagraphStyle(
     "title",
     fontName=FONT_BOLD,
-    fontSize=12.5,
-    leading=15,
+    fontSize=SIZE,
+    leading=LEADING,
     alignment=TA_CENTER,
     textColor=INK,
 )
 SUBTITLE = ParagraphStyle(
     "subtitle",
     fontName=FONT,
-    fontSize=9,
-    leading=12,
+    fontSize=SIZE,
+    leading=LEADING,
     alignment=TA_CENTER,
     textColor=INK,
 )
 HEADING = ParagraphStyle(
     "heading",
     fontName=FONT_BOLD,
-    fontSize=9.5,
-    leading=12,
-    spaceBefore=8,
-    spaceAfter=3,
+    fontSize=SIZE,
+    leading=LEADING,
+    spaceBefore=10,
+    spaceAfter=5,
     textColor=INK,
+    # Safe for prose and short blocks. Tables carry their own title row instead,
+    # because keeping a heading with a table long enough to split pushes the
+    # whole table to the next page and leaves the current one half empty.
+    keepWithNext=1,
 )
 BODY = ParagraphStyle(
     "body",
     fontName=FONT,
-    fontSize=8.5,
-    leading=11,
+    fontSize=SIZE,
+    leading=LEADING,
     alignment=TA_LEFT,
     textColor=INK,
 )
-CELL = ParagraphStyle("cell", parent=BODY, fontSize=8, leading=10)
+CELL = ParagraphStyle("cell", parent=BODY, leading=14.5)
 CELL_BOLD = ParagraphStyle("cellBold", parent=CELL, fontName=FONT_BOLD)
-NOTE = ParagraphStyle("note", parent=BODY, fontSize=7.5, leading=10, textColor=RULE)
+NOTE = ParagraphStyle("note", parent=BODY)
+
+WRITING_ROW = 30
+"""Height of a row somebody has to write in. A row sized to its text is fine to
+read and impossible to fill in by hand."""
 
 
 class Rule(Flowable):
     """A plain horizontal line, for signing on or separating blocks."""
 
-    def __init__(self, width: float, *, thickness: float = 0.6, color=RULE) -> None:
+    def __init__(self, width: float, *, thickness: float = 0.7, color=RULE) -> None:
         super().__init__()
         self.width = width
         self.height = thickness
@@ -92,46 +149,24 @@ class Rule(Flowable):
         self.canv.line(0, 0, self.width, 0)
 
 
-def _footer(canvas: Canvas, doc: BaseDocTemplate) -> None:
-    """Page furniture: which form, which page, and where it came from."""
-    canvas.saveState()
-    canvas.setFont(FONT, 7)
-    canvas.setFillColor(RULE)
-
-    left = doc.leftMargin
-    right = doc.pagesize[0] - doc.rightMargin
-    y = 0.38 * inch
-
-    canvas.setStrokeColor(HAIRLINE)
-    canvas.setLineWidth(0.5)
-    canvas.line(left, y + 10, right, y + 10)
-
-    canvas.drawString(left, y, f"{PROJECT.short_name} | {doc.form_name}")
-    canvas.drawRightString(right, y, f"Page {canvas.getPageNumber()}")
-    canvas.drawCentredString(
-        (left + right) / 2, y, "Generated, then completed and signed by hand"
-    )
-    canvas.restoreState()
-
-
 class FormDoc(BaseDocTemplate):
-    """A short bond page with a footer naming the form."""
+    """A portrait letter page with nothing on it but the form.
 
-    def __init__(
-        self,
-        path: Path,
-        *,
-        form_name: str,
-        orientation: Orientation = "portrait",
-    ) -> None:
-        size = landscape(letter) if orientation == "landscape" else letter
+    The frame carries no padding of its own. A default frame inset the content
+    by six points on each side, which left a full-width table wider than the
+    space it was given, and reportlab centred the overflow: every table sat six
+    points left of every paragraph. With no padding, `doc.width` is exactly the
+    usable width and the two line up.
+    """
+
+    def __init__(self, path: Path, *, form_name: str) -> None:
         super().__init__(
             str(path),
-            pagesize=size,
+            pagesize=letter,
             leftMargin=MARGIN,
             rightMargin=MARGIN,
             topMargin=MARGIN,
-            bottomMargin=0.7 * inch,
+            bottomMargin=MARGIN,
             title=form_name,
             author=PROJECT.short_name,
             subject=PROJECT.title,
@@ -148,104 +183,88 @@ class FormDoc(BaseDocTemplate):
             topPadding=0,
             bottomPadding=0,
         )
-        self.addPageTemplates(PageTemplate(id="form", frames=[frame], onPage=_footer))
+        self.addPageTemplates(PageTemplate(id="form", frames=[frame]))
 
 
 def title_block(form_name: str, purpose: str) -> list[Flowable]:
     """The heading every form opens with."""
     out: list[Flowable] = []
     if PROJECT.school:
-        out.append(Paragraph(PROJECT.school.upper(), SUBTITLE))
+        out.append(Paragraph(f"<b>{PROJECT.school.upper()}</b>", SUBTITLE))
     if PROJECT.department:
         out.append(Paragraph(PROJECT.department, SUBTITLE))
+    if PROJECT.school or PROJECT.department:
+        out.append(Spacer(1, 8))
+
+    out.append(Paragraph(f"<b>{form_name.upper()}</b>", TITLE))
     out.append(Spacer(1, 6))
-    out.append(Paragraph(form_name.upper(), TITLE))
-    out.append(Spacer(1, 3))
     out.append(Paragraph(PROJECT.title, SUBTITLE))
-    out.append(Spacer(1, 5))
-    out.append(Paragraph(purpose, NOTE))
-    out.append(Spacer(1, 9))
+    out.append(Spacer(1, 12))
+    out.append(Paragraph(purpose, BODY))
+    out.append(Spacer(1, 14))
     return out
 
 
-def _field(label: str, value: str, width: float) -> Table:
-    """A label with either a value or a line to write one on."""
-    text = value if value else ""
-    inner = Table(
-        [[Paragraph(f"<b>{label}</b>", CELL), Paragraph(text, CELL)]],
-        colWidths=[width * 0.32, width * 0.68],
-    )
-    inner.setStyle(
+def field_rows(fields: Sequence[tuple[str, str]], width: float) -> Table:
+    """Labelled fields, one per row, each with a line to write on.
+
+    One per row rather than two side by side: at twelve point a pair of columns
+    leaves neither of them long enough to write a name in.
+    """
+    label_width = width * 0.30
+    rows: list[list[Flowable]] = [
+        [Paragraph(f"<b>{label}</b>", CELL), Paragraph(value, CELL)]
+        for label, value in fields
+    ]
+
+    table = Table(rows, colWidths=[label_width, width - label_width])
+    table.setStyle(
         TableStyle(
             [
                 ("VALIGN", (0, 0), (-1, -1), "BOTTOM"),
                 ("LEFTPADDING", (0, 0), (-1, -1), 0),
-                ("RIGHTPADDING", (0, 0), (-1, -1), 4),
-                ("TOPPADDING", (0, 0), (-1, -1), 3),
-                ("BOTTOMPADDING", (0, 0), (-1, -1), 3),
-                ("LINEBELOW", (1, 0), (1, 0), 0.5, RULE),
-            ]
-        )
-    )
-    return inner
-
-
-def identity_block(width: float, extra: Sequence[tuple[str, str]] = ()) -> Flowable:
-    """Who the project is, in two columns, with blanks where they belong."""
-    left: list[tuple[str, str]] = [
-        ("Subject", PROJECT.subject),
-        ("Section", PROJECT.section),
-        ("School year", PROJECT.school_year),
-    ]
-    right: list[tuple[str, str]] = [
-        ("Adviser", PROJECT.adviser),
-        ("Date prepared", ""),
-        ("Document no.", ""),
-    ]
-    right.extend(extra)
-
-    half = width / 2 - 6
-    rows: list[list[Flowable]] = []
-    for i in range(max(len(left), len(right))):
-        cells: list[Flowable] = []
-        for column in (left, right):
-            if i < len(column):
-                label, value = column[i]
-                cells.append(_field(label, value, half))
-            else:
-                cells.append(Spacer(1, 1))
-        rows.append(cells)
-
-    members = ", ".join(PROJECT.member_lines())
-    rows.append([_field("Prepared by", members, width), Spacer(1, 1)])
-
-    table = Table(rows, colWidths=[half, half])
-    table.setStyle(
-        TableStyle(
-            [
-                ("VALIGN", (0, 0), (-1, -1), "TOP"),
-                ("LEFTPADDING", (0, 0), (-1, -1), 0),
                 ("RIGHTPADDING", (0, 0), (-1, -1), 0),
-                ("TOPPADDING", (0, 0), (-1, -1), 1),
-                ("BOTTOMPADDING", (0, 0), (-1, -1), 1),
-                ("SPAN", (0, len(rows) - 1), (1, len(rows) - 1)),
+                ("TOPPADDING", (0, 0), (-1, -1), 9),
+                ("BOTTOMPADDING", (0, 0), (-1, -1), 3),
+                ("LINEBELOW", (1, 0), (1, -1), 0.7, RULE),
             ]
         )
     )
     return table
 
 
+def identity_block(width: float, extra: Sequence[tuple[str, str]] = ()) -> list[Flowable]:
+    """Who the project is, one field per row, then the members one per row."""
+    fields: list[tuple[str, str]] = [
+        ("Subject", PROJECT.subject),
+        ("Section", PROJECT.section),
+        ("School year", PROJECT.school_year),
+        ("Adviser", PROJECT.adviser),
+        ("Date prepared", ""),
+    ]
+    fields.extend(extra)
+
+    out: list[Flowable] = [field_rows(fields, width), Spacer(1, 14)]
+    out.append(Paragraph("<b>Prepared by</b>", BODY))
+    out.append(
+        field_rows(
+            [(f"{i}.", name) for i, name in enumerate(PROJECT.member_lines(), start=1)],
+            width,
+        )
+    )
+    return out
+
+
 def heading(text: str) -> Paragraph:
-    return Paragraph(text, HEADING)
+    return Paragraph(f"<b>{text}</b>", HEADING)
 
 
 def note(text: str) -> Paragraph:
     return Paragraph(text, NOTE)
 
 
-WRITING_ROW = 24
-"""Height of a row somebody has to write in, in points. A default-height row is
-fine to read and impossible to write in."""
+def body(text: str) -> Paragraph:
+    return Paragraph(text, BODY)
 
 
 def data_table(
@@ -253,51 +272,62 @@ def data_table(
     rows: Sequence[Sequence[str]],
     widths: Sequence[float],
     *,
+    title: str = "",
     blank_rows: int = 0,
     align_right: Sequence[int] = (),
     show_header: bool = True,
 ) -> Table:
-    """A ruled table, with empty rows at the bottom for writing more in.
+    """A ruled table. Rows that are entirely empty get writing height.
 
-    Rows that are entirely empty are given writing height, so a form does not
-    print a row too thin to fill in.
+    `title` becomes a spanning row at the top. Carrying the title inside the
+    table means it can never be left stranded at the foot of a page, and it
+    repeats with the column headers when the table runs over.
     """
-    body: list[list[Flowable]] = []
+    body_rows: list[list[Flowable]] = []
     heights: list[float | None] = []
+    lead = 0
+
+    if title:
+        body_rows.append([Paragraph(f"<b>{title}</b>", CELL)] + [""] * (len(header) - 1))
+        heights.append(None)
+        lead = 1
 
     if show_header:
-        body.append([Paragraph(h, CELL_BOLD) for h in header])
+        body_rows.append([Paragraph(f"<b>{h}</b>", CELL) for h in header])
         heights.append(None)
 
     for row in rows:
-        body.append([Paragraph(str(cell), CELL) for cell in row])
+        body_rows.append([Paragraph(str(cell), CELL) for cell in row])
         blank = all(str(cell).strip() == "" for cell in row)
         heights.append(WRITING_ROW if blank else None)
 
     for _ in range(blank_rows):
-        body.append([Paragraph("", CELL) for _ in header])
+        body_rows.append([Paragraph("", CELL) for _ in header])
         heights.append(WRITING_ROW)
 
     table = Table(
-        body,
+        body_rows,
         colWidths=list(widths),
         rowHeights=heights,
-        repeatRows=1 if show_header else 0,
+        repeatRows=lead + (1 if show_header else 0),
     )
     style = [
-        ("GRID", (0, 0), (-1, -1), 0.5, HAIRLINE),
-        ("BOX", (0, 0), (-1, -1), 0.8, RULE),
-        ("VALIGN", (0, 0), (-1, -1), "MIDDLE"),
-        ("TOPPADDING", (0, 0), (-1, -1), 4),
-        ("BOTTOMPADDING", (0, 0), (-1, -1), 4),
-        ("LEFTPADDING", (0, 0), (-1, -1), 5),
-        ("RIGHTPADDING", (0, 0), (-1, -1), 5),
+        ("GRID", (0, 0), (-1, -1), 0.6, HAIRLINE),
+        ("BOX", (0, 0), (-1, -1), 1.0, RULE),
+        ("VALIGN", (0, 0), (-1, -1), "TOP"),
+        ("TOPPADDING", (0, 0), (-1, -1), 7),
+        ("BOTTOMPADDING", (0, 0), (-1, -1), 7),
+        ("LEFTPADDING", (0, 0), (-1, -1), 7),
+        ("RIGHTPADDING", (0, 0), (-1, -1), 7),
     ]
-    if show_header:
+    if title:
+        style.append(("SPAN", (0, 0), (-1, 0)))
         style.append(("BACKGROUND", (0, 0), (-1, 0), BAND))
-        style.append(("LINEBELOW", (0, 0), (-1, 0), 0.8, RULE))
+    if show_header:
+        style.append(("BACKGROUND", (0, lead), (-1, lead), BAND))
+        style.append(("LINEBELOW", (0, lead), (-1, lead), 1.0, RULE))
     for column in align_right:
-        style.append(("ALIGN", (column, 0), (column, -1), "RIGHT"))
+        style.append(("ALIGN", (column, lead), (column, -1), "RIGHT"))
     table.setStyle(TableStyle(style))
     return table
 
@@ -306,57 +336,73 @@ def signature_block(
     signatories: Sequence[Signatory],
     width: float,
     *,
-    columns: int = 2,
     caption: str = "",
 ) -> list[Flowable]:
-    """Names on rules, in a grid, kept on one page with their heading.
+    """One signatory per row: the role, a rule to sign on, then the date line.
 
-    Two columns by default: any more and the rules get too short to sign on.
+    Stacked rather than side by side, so each rule runs most of the page width
+    and there is room to sign at twelve point.
     """
     if not signatories:
         return []
 
     out: list[Flowable] = []
     if caption:
-        out.append(note(caption))
-        out.append(Spacer(1, 4))
+        out.append(Paragraph(caption, BODY))
+        out.append(Spacer(1, 14))
 
-    cell_width = width / columns - 10
-    cells: list[list[Flowable]] = []
+    rule_width = width * 0.60
+    date_width = width * 0.32
+    gap = width - rule_width - date_width
 
     for person in signatories:
-        # Room to actually sign in, above the rule.
-        parts: list[Flowable] = [Spacer(1, 30), Rule(cell_width)]
-        parts.append(Paragraph(person.name or "&nbsp;", CELL_BOLD))
-        parts.append(Paragraph(person.role, CELL))
-        if person.subtitle:
-            parts.append(Paragraph(person.subtitle, NOTE))
-        if person.date_line:
-            parts.append(Spacer(1, 9))
-            parts.append(Rule(cell_width * 0.6, thickness=0.5))
-            parts.append(Paragraph("Date signed", NOTE))
-        cells.append(parts)
+        out.append(Paragraph(f"<b>{person.role}</b>", BODY))
+        out.append(Spacer(1, 28))
 
-    rows: list[list[object]] = []
-    for i in range(0, len(cells), columns):
-        row: list[object] = list(cells[i : i + columns])
-        while len(row) < columns:
-            row.append(Spacer(1, 1))
-        rows.append(row)
-
-    grid = Table(rows, colWidths=[width / columns] * columns)
-    grid.setStyle(
-        TableStyle(
-            [
-                ("VALIGN", (0, 0), (-1, -1), "TOP"),
-                ("LEFTPADDING", (0, 0), (-1, -1), 0),
-                ("RIGHTPADDING", (0, 0), (-1, -1), 10),
-                ("TOPPADDING", (0, 0), (-1, -1), 6),
-                ("BOTTOMPADDING", (0, 0), (-1, -1), 10),
-            ]
+        rules = Table(
+            [[Rule(rule_width), "", Rule(date_width)]],
+            colWidths=[rule_width, gap, date_width],
         )
-    )
-    out.append(grid)
+        rules.setStyle(
+            TableStyle(
+                [
+                    ("VALIGN", (0, 0), (-1, -1), "BOTTOM"),
+                    ("LEFTPADDING", (0, 0), (-1, -1), 0),
+                    ("RIGHTPADDING", (0, 0), (-1, -1), 0),
+                    ("TOPPADDING", (0, 0), (-1, -1), 0),
+                    ("BOTTOMPADDING", (0, 0), (-1, -1), 0),
+                ]
+            )
+        )
+        out.append(rules)
+
+        under = Table(
+            [
+                [
+                    Paragraph(person.name or "Signature over printed name", CELL),
+                    "",
+                    Paragraph("Date signed", CELL),
+                ]
+            ],
+            colWidths=[rule_width, gap, date_width],
+        )
+        under.setStyle(
+            TableStyle(
+                [
+                    ("VALIGN", (0, 0), (-1, -1), "TOP"),
+                    ("LEFTPADDING", (0, 0), (-1, -1), 0),
+                    ("RIGHTPADDING", (0, 0), (-1, -1), 0),
+                    ("TOPPADDING", (0, 0), (-1, -1), 3),
+                    ("BOTTOMPADDING", (0, 0), (-1, -1), 0),
+                ]
+            )
+        )
+        out.append(under)
+
+        if person.subtitle:
+            out.append(Paragraph(person.subtitle, CELL))
+        out.append(Spacer(1, 20))
+
     return out
 
 
@@ -364,9 +410,9 @@ def remarks_block(width: float, *, lines: int = 4, label: str = "Remarks") -> li
     """Ruled space for whatever the form did not anticipate."""
     out: list[Flowable] = [heading(label)]
     for _ in range(lines):
-        out.append(Spacer(1, 13))
-        out.append(Rule(width, thickness=0.5, color=HAIRLINE))
-    out.append(Spacer(1, 6))
+        out.append(Spacer(1, 24))
+        out.append(Rule(width, thickness=0.6, color=HAIRLINE))
+    out.append(Spacer(1, 10))
     return out
 
 

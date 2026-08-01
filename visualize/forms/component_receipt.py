@@ -38,36 +38,31 @@ PARTIES: tuple[Signatory, ...] = (
 def story(width: float) -> list[Flowable]:
     out: list[Flowable] = []
     out.extend(layout.title_block(FORM_NAME, PURPOSE))
-    out.append(
+    out.extend(
         layout.identity_block(
             width,
-            extra=(("Supplier", ""), ("Delivery receipt no.", ""), ("Date received", "")),
+            extra=(
+                ("Supplier", ""),
+                ("Delivery receipt no.", ""),
+                ("Date received", ""),
+            ),
         )
     )
-    out.append(Spacer(1, 12))
+    out.append(Spacer(1, 16))
 
-    out.append(layout.heading("Items received"))
     out.append(
         layout.data_table(
-            [
-                "No.",
-                "Item and specification",
-                "Qty ordered",
-                "Qty received",
-                "Unit price",
-                "Condition",
-            ],
+            ["No.", "Item", "Ordered", "Received", "Condition"],
             [],
             [
-                width * 0.05,
-                width * 0.37,
-                width * 0.12,
-                width * 0.12,
+                width * 0.08,
+                width * 0.42,
                 width * 0.14,
-                width * 0.20,
+                width * 0.14,
+                width * 0.22,
             ],
-            blank_rows=16,
-            align_right=(4,),
+            title="Items received",
+            blank_rows=12,
         )
     )
     out.append(Spacer(1, 6))
@@ -78,12 +73,12 @@ def story(width: float) -> list[Flowable]:
     )
     out.append(Spacer(1, 10))
 
-    out.append(layout.heading("Inspection"))
     out.append(
         layout.data_table(
-            ["Check", "Yes", "No", "Not applicable", "Remarks"],
-            [[check, "[  ]", "[  ]", "[  ]", ""] for check in CHECKS],
-            [width * 0.38, width * 0.07, width * 0.07, width * 0.13, width * 0.35],
+            ["Check", "Result", "Remarks"],
+            [[check, "Yes [  ]<br/>No [  ]", ""] for check in CHECKS],
+            [width * 0.46, width * 0.16, width * 0.38],
+            title="Inspection",
         )
     )
     out.append(Spacer(1, 10))

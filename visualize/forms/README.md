@@ -12,13 +12,31 @@ python bill_of_materials.py     # or just one
 Needs `reportlab`. The generated PDFs are ignored by git; the scripts are the
 source of truth.
 
+## House style
+
+Every form obeys the same four rules, set once in `layout.py`:
+
+- **Arial, 12 point, everywhere.** Headings, table cells, captions and the title
+  are all one size. Emphasis comes from weight and capitals, never from size.
+  Arial is loaded from the system font file; on a machine without it the scripts
+  fall back to Helvetica, which shares its metrics, and say so.
+- **Portrait letter**, 0.6 inch margins on all four sides.
+- **No footer.** Nothing on the page but the form.
+- **Room to write.** Blank rows are 30 points tall, signature rules have 28
+  points of clear space above them, and every labelled field gets its own row.
+
+Twelve point is large for a form, which is why the tables here are four or five
+columns at most. Anything that would need a sixth column is stacked inside a
+cell instead: the unit sits with the quantity, the expected result sits under
+the test steps, and yes/no boxes share one Result column.
+
 ## The forms
 
 | Script | Form | What it is for |
 | --- | --- | --- |
 | `bill_of_materials.py` | Bill of Materials | 31 components in 7 sections, with quantities filled in and prices blank. Prepared, checked, recommended, approved. |
 | `component_receipt.py` | Component Receipt and Inspection | One sheet per delivery: what arrived against what was ordered, and whether it survived the trip. |
-| `test_witness.py` | Test Witness Sheet | 14 cases covering the two-scan sequence, the refusals, and the record that has to follow an opening. Landscape. |
+| `test_witness.py` | Test Witness Sheet | 14 cases covering the two-scan sequence, the refusals, and the record that has to follow an opening. |
 | `enrollment_consent.py` | Fingerprint Enrollment Consent | One per person: what is stored, who can see it, how to withdraw. |
 | `acceptance_turnover.py` | Acceptance and Turnover | 10 acceptance criteria and an itemized handover, signed by whoever receives the system. |
 | `approval_sheet.py` | Approval Sheet | The endorsement, the panel verdict, and the signatures a bound copy needs. |
@@ -41,8 +59,8 @@ worth printing; a form that guesses at a price is worth nothing.
 - **Project identity** lives in `project.py`. Set `school`, `department`,
   `adviser` and `school_year` there once and every form picks them up. Anything
   left as an empty string prints as a line to write on.
-- **The look** lives in `layout.py`: page size, fonts, the ruled table, the
-  signature block, the footer. Change it there and all six forms follow.
+- **The look** lives in `layout.py`: page size, the font and its one size, the
+  ruled table, the signature block. Change it there and all six forms follow.
 - **A form's content** lives in its own script, near the top, as plain tuples.
 
 ## Adding a form
@@ -69,5 +87,9 @@ def main() -> None:
     build(doc, story(doc.width))
 ```
 
-Then add it to `FORMS` in `generate_all.py`. Pass
-`orientation="landscape"` to `FormDoc` if the table is wide.
+Then add it to `FORMS` in `generate_all.py`.
+
+Give a table its title with `data_table(..., title="Section name")` rather than
+a separate heading above it. The title becomes a spanning row, so it can never
+be stranded at the foot of a page, and it repeats with the column headers when
+the table runs over.

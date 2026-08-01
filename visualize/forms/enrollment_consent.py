@@ -80,21 +80,21 @@ def story(width: float) -> list[Flowable]:
 
     out.append(layout.heading("Person enrolling"))
     out.append(
-        layout.data_table(
-            ["Full name", "Student or employee no.", "Role", "Contact number"],
-            [["", "", "", ""]],
-            [width * 0.34, width * 0.22, width * 0.20, width * 0.24],
+        layout.field_rows(
+            [
+                ("Full name", ""),
+                ("Student or employee no.", ""),
+                ("Role", ""),
+                ("Contact number", ""),
+                ("Username issued", ""),
+                ("Fingers enrolled", ""),
+                ("Readers", "Door [  ]     Cabinet [  ]"),
+                ("Date enrolled", ""),
+            ],
+            width,
         )
     )
-    out.append(Spacer(1, 4))
-    out.append(
-        layout.data_table(
-            ["Username issued", "Fingers enrolled", "Readers", "Date enrolled"],
-            [["", "", "Door [  ]   Cabinet [  ]", ""]],
-            [width * 0.28, width * 0.22, width * 0.28, width * 0.22],
-        )
-    )
-    out.append(Spacer(1, 12))
+    out.append(Spacer(1, 16))
 
     out.append(layout.heading("What you are agreeing to"))
     out.append(
@@ -116,12 +116,12 @@ def story(width: float) -> list[Flowable]:
     out.extend(layout.signature_block(PARTIES, width))
 
     out.append(Spacer(1, 4))
-    out.append(layout.heading("Withdrawal, if any"))
     out.append(
         layout.data_table(
-            ["Date withdrawn", "Template erased by", "Reason", "Signature"],
-            [["", "", "", ""]],
-            [width * 0.20, width * 0.26, width * 0.29, width * 0.25],
+            ["Date withdrawn", "Template erased by", "Reason"],
+            [["", "", ""]],
+            [width * 0.24, width * 0.34, width * 0.42],
+            title="Withdrawal, if any",
         )
     )
     return out

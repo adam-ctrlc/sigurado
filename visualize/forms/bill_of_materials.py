@@ -122,11 +122,9 @@ def _section_rows(section: Section, start: int) -> tuple[list[list[str]], int]:
             [
                 str(number),
                 f"<b>{item.item}</b><br/>{item.spec}",
-                item.quantity,
-                item.unit,
+                f"{item.quantity} {item.unit}".strip(),
                 item.unit_price,
                 "",
-                item.supplier,
             ]
         )
         number += 1
@@ -136,30 +134,37 @@ def _section_rows(section: Section, start: int) -> tuple[list[list[str]], int]:
 def story(width: float) -> list[Flowable]:
     out: list[Flowable] = []
     out.extend(layout.title_block(FORM_NAME, PURPOSE))
-    out.append(layout.identity_block(width, extra=(("Quotation ref.", ""),)))
-    out.append(Spacer(1, 10))
+    out.extend(
+        layout.identity_block(
+            width, extra=(("Supplier", ""), ("Quotation reference", ""))
+        )
+    )
+    out.append(Spacer(1, 16))
 
-    header = ["No.", "Item and specification", "Qty", "Unit", "Unit price", "Amount", "Supplier"]
+    header = ["No.", "Item and specification", "Qty", "Unit price", "Amount"]
     widths = [
-        width * 0.05,
-        width * 0.40,
-        width * 0.06,
         width * 0.07,
-        width * 0.13,
-        width * 0.13,
-        width * 0.16,
+        width * 0.47,
+        width * 0.12,
+        width * 0.17,
+        width * 0.17,
     ]
 
     number = 1
     for section in SECTIONS:
         rows, number = _section_rows(section, number)
-        out.append(layout.heading(section.heading))
         out.append(
-            layout.data_table(header, rows, widths, blank_rows=1, align_right=(4, 5))
+            layout.data_table(
+                header,
+                rows,
+                widths,
+                title=section.heading,
+                blank_rows=1,
+                align_right=(3, 4),
+            )
         )
-        out.append(Spacer(1, 4))
+        out.append(Spacer(1, 12))
 
-    out.append(layout.heading("Totals"))
     out.append(
         layout.data_table(
             ["Description", "Amount"],
@@ -169,7 +174,8 @@ def story(width: float) -> list[Flowable]:
                 ["Contingency (10 percent)", ""],
                 ["<b>Grand total</b>", ""],
             ],
-            [width * 0.72, width * 0.28],
+            [width * 0.70, width * 0.30],
+            title="Totals",
             align_right=(1,),
         )
     )
