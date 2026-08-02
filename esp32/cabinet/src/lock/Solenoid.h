@@ -25,3 +25,18 @@ class Solenoid {
     bool activeLow_;
     uint32_t holdMs_;
 };
+
+inline void Solenoid::begin() {
+    pinMode(pin_, OUTPUT);
+    lock();
+}
+
+inline void Solenoid::lock() {
+    digitalWrite(pin_, activeLow_ ? HIGH : LOW);
+}
+
+inline void Solenoid::release() {
+    digitalWrite(pin_, activeLow_ ? LOW : HIGH);
+    delay(holdMs_);
+    lock();
+}

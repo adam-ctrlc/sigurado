@@ -1,4 +1,4 @@
--// Sigurado: open this file in OpenSCAD and press F5 to preview (F6 to render).
+// Sigurado: open this file in OpenSCAD and press F5 to preview (F6 to render).
 //
 // Pick what to show with the `part` dropdown below, or use
 // Window > Customizer in the OpenSCAD GUI.
