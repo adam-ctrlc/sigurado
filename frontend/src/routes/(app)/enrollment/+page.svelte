@@ -16,6 +16,8 @@
 	import { Skeleton } from '$lib/components/ui/skeleton';
 	import { Separator } from '$lib/components/ui/separator';
 	import { myEnrollments, verifyCode } from '$lib/api/enrollment';
+	import { me } from '$lib/api/auth';
+	import { auth } from '$lib/stores/auth.svelte';
 	import { ApiError } from '$lib/api/client';
 	import { formatDateTime } from '$lib/format';
 	import type { Enrollment, EnrollmentStatus } from '$lib/schemas/enrollment';
@@ -91,6 +93,14 @@
 	async function refresh(): Promise<void> {
 		try {
 			list = await myEnrollments();
+			// Somebody held by the enrollment gate is freed by this, so ask the
+			// server whether the finger landed rather than waiting for a reload.
+			if (auth.needsEnrollment && list.some((e) => e.status === 'bound')) {
+				auth.setUser(await me());
+				if (auth.isEnrolled) {
+					toast.success('You are enrolled. The rest of the app is open to you now.');
+				}
+			}
 		} catch {
 			// keep the current list; a transient failure should not blank the page
 		} finally {

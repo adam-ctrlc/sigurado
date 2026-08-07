@@ -19,6 +19,21 @@ class AuthStore {
 		return this.user?.role === 'admin' || this.user?.role === 'faculty';
 	}
 
+	/** A finger is bound to this account, so the readers know them. */
+	get isEnrolled(): boolean {
+		return this.user?.enrolled === true;
+	}
+
+	/**
+	 * Everyone but an administrator has to enroll before the app is any use to
+	 * them: without a finger bound, no door opens and nothing they do is recorded
+	 * against them. Administrators are exempt because somebody has to be able to
+	 * run the roster and pair the readers before anyone can enroll at all.
+	 */
+	get needsEnrollment(): boolean {
+		return this.user !== null && this.user.role !== 'admin' && !this.isEnrolled;
+	}
+
 	setSession(token: string, user: User): void {
 		this.token = token;
 		this.user = user;

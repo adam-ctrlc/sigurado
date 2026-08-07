@@ -19,7 +19,7 @@ use crate::{
         password::{hash_password, verify_password},
         policy::validate_password,
     },
-    entities::{login_events, prelude::*, users},
+    entities::{fingerprints, login_events, prelude::*, users},
     error::{AppError, AppResult},
     pagination::{Page, page_of, per_page_of},
     routes::users::{LoginEventResponse, UserResponse},
@@ -39,10 +39,25 @@ pub struct LoginRequest {
     pub password: String,
 }
 
+/// The signed-in person, plus whether they have a finger bound.
+///
+/// The count rides along only here. A roster of a hundred people does not want
+/// a count query each, and only the person themselves is asked to go and enroll.
+#[derive(Debug, Serialize)]
+pub struct MeResponse {
+    #[serde(flatten)]
+    pub user: UserResponse,
+    pub fingerprint_count: u64,
+    /// Convenience for the UI, which gates on this rather than on the number.
+    pub enrolled: bool,
+}
+
 #[derive(Debug, Serialize)]
 pub struct LoginResponse {
     pub token: String,
-    pub user: UserResponse,
+    /// Carries the enrollment fields as well, so the page knows on the first
+    /// render whether this person still has to enroll.
+    pub user: MeResponse,
 }
 
 #[derive(Debug, Deserialize)]
@@ -207,18 +222,37 @@ async fn login(
         }
     };
 
+    let fingerprint_count = Fingerprints::find()
+        .filter(fingerprints::Column::UserId.eq(user.id))
+        .count(&state.db)
+        .await?;
+
     Ok(Json(LoginResponse {
         token,
-        user: user.into(),
+        user: MeResponse {
+            user: user.into(),
+            fingerprint_count,
+            enrolled: fingerprint_count > 0,
+        },
     }))
 }
 
-async fn me(State(state): State<AppState>, auth: AuthUser) -> AppResult<Json<UserResponse>> {
+async fn me(State(state): State<AppState>, auth: AuthUser) -> AppResult<Json<MeResponse>> {
     let user = Users::find_by_id(auth.user_id)
         .one(&state.db)
         .await?
         .ok_or(AppError::Unauthorized)?;
-    Ok(Json(user.into()))
+
+    let fingerprint_count = Fingerprints::find()
+        .filter(fingerprints::Column::UserId.eq(auth.user_id))
+        .count(&state.db)
+        .await?;
+
+    Ok(Json(MeResponse {
+        user: user.into(),
+        fingerprint_count,
+        enrolled: fingerprint_count > 0,
+    }))
 }
 
 /// A user editing their own record. Deliberately cannot touch role or the

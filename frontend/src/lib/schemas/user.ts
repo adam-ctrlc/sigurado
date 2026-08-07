@@ -18,7 +18,13 @@ export const userSchema = z.object({
 	role: roleSchema,
 	is_active: z.boolean(),
 	last_login_at: z.string().nullish(),
-	created_at: z.string()
+	created_at: z.string(),
+	/**
+	 * Only /auth/me carries these. A roster does not count fingerprints per row,
+	 * and only the person themselves is ever asked to go and enroll.
+	 */
+	fingerprint_count: z.number().nullish(),
+	enrolled: z.boolean().nullish()
 });
 export type User = z.infer<typeof userSchema>;
 

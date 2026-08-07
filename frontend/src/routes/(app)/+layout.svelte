@@ -5,6 +5,7 @@
 	import { Separator } from '$lib/components/ui/separator';
 	import AppSidebar from '$lib/components/app-sidebar.svelte';
 	import ThemeToggle from '$lib/components/theme-toggle.svelte';
+	import EnrollmentGate from '$lib/components/enrollment-gate.svelte';
 
 	let { children }: { children: Snippet } = $props();
 
@@ -25,6 +26,9 @@
 
 	const title = $derived(titles[page.url.pathname] ?? 'Sigurado');
 </script>
+
+<!-- Held over everything until a finger is bound. Renders nothing otherwise. -->
+<EnrollmentGate />
 
 <Sidebar.Provider>
 	<AppSidebar />

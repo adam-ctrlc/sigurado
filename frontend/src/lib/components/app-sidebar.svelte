@@ -21,6 +21,7 @@ import XIcon from '@lucide/svelte/icons/x';
 	import * as Avatar from '$lib/components/ui/avatar';
 	import { Separator } from '$lib/components/ui/separator';
 	import { auth } from '$lib/stores/auth.svelte';
+	import { allowedWhileUnenrolled } from '$lib/enrollment';
 	import type { Role } from '$lib/schemas/user';
 	import type { Component } from 'svelte';
 
@@ -90,6 +91,12 @@ import XIcon from '@lucide/svelte/icons/x';
 		return page.url.pathname === href || page.url.pathname.startsWith(`${href}/`);
 	}
 
+	// Out of reach until a finger is bound. Shown but plainly unavailable, rather
+	// than hidden, so the sidebar does not appear to change shape on enrollment.
+	function isHeld(href: string): boolean {
+		return auth.needsEnrollment && !allowedWhileUnenrolled(href);
+	}
+
 	let logoutOpen = $state(false);
 
 	function logout(): void {
@@ -102,9 +109,9 @@ import XIcon from '@lucide/svelte/icons/x';
 	<Sidebar.Header>
 		<Sidebar.Menu>
 			<Sidebar.MenuItem>
-				<Sidebar.MenuButton size="lg">
+				<Sidebar.MenuButton size="lg" class={isHeld('/dashboard') ? 'pointer-events-none' : ''}>
 					{#snippet child({ props })}
-						<a href="/dashboard" {...props}>
+						<a href={isHeld('/dashboard') ? undefined : '/dashboard'} {...props}>
 							<div
 								class="bg-primary text-primary-foreground flex aspect-square size-8 items-center justify-center rounded-full"
 							>
@@ -129,10 +136,21 @@ import XIcon from '@lucide/svelte/icons/x';
 					<Sidebar.Menu>
 						{#each group.items as item (item.href)}
 							{@const Icon = item.icon}
+							{@const held = isHeld(item.href)}
 							<Sidebar.MenuItem>
-								<Sidebar.MenuButton isActive={isActive(item.href)} tooltipContent={item.label}>
+								<Sidebar.MenuButton
+									isActive={isActive(item.href)}
+									tooltipContent={held ? `${item.label}: enroll your fingerprint first` : item.label}
+									class={held ? 'pointer-events-none opacity-45' : ''}
+								>
 									{#snippet child({ props })}
-										<a href={item.href} {...props}>
+										<!-- No href while held, so it cannot be clicked, focused or
+										     opened in a new tab. -->
+										<a
+											href={held ? undefined : item.href}
+											aria-disabled={held ? 'true' : undefined}
+											{...props}
+										>
 											<Icon />
 											<span>{item.label}</span>
 										</a>
@@ -152,10 +170,15 @@ import XIcon from '@lucide/svelte/icons/x';
 				<Sidebar.MenuButton
 					size="lg"
 					isActive={isActive('/profile')}
-					tooltipContent="Your profile"
+					tooltipContent={isHeld('/profile') ? 'Your profile: enroll your fingerprint first' : 'Your profile'}
+					class={isHeld('/profile') ? 'pointer-events-none opacity-45' : ''}
 				>
 					{#snippet child({ props })}
-						<a href="/profile" {...props}>
+						<a
+							href={isHeld('/profile') ? undefined : '/profile'}
+							aria-disabled={isHeld('/profile') ? 'true' : undefined}
+							{...props}
+						>
 							<Avatar.Root class="size-8">
 								<Avatar.Fallback>{initials}</Avatar.Fallback>
 							</Avatar.Root>
