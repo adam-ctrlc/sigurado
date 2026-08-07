@@ -25,6 +25,7 @@ use crate::{
         users,
     },
     error::AppError,
+    services::purge_service,
     util,
 };
 
@@ -105,7 +106,14 @@ pub fn clamp_days(days: i64) -> i64 {
 pub async fn detect(db: &DatabaseConnection, days: i64) -> Result<Vec<Flag>, AppError> {
     let days = clamp_days(days);
     let now = util::now();
-    let since = now - chrono::Duration::days(days);
+    let asked = now - chrono::Duration::days(days);
+
+    // Flags are read off the history, so cleared history cannot raise them. The
+    // floor is whichever is later: the window asked for, or the clearing.
+    let since = match purge_service::cutoff(db).await? {
+        Some(hidden) if hidden > asked => hidden,
+        _ => asked,
+    };
 
     let ctx = Context {
         users: Users::find()

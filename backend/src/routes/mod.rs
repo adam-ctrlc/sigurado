@@ -5,6 +5,7 @@ pub mod devices;
 pub mod enrollment;
 pub mod flags;
 pub mod logs;
+pub mod purge;
 pub mod sessions;
 pub mod sheets;
 pub mod sms;
@@ -32,6 +33,7 @@ pub fn app_router(state: AppState, cfg: &Config) -> Router {
         .merge(logs::router())
         .merge(flags::router())
         .merge(sheets::router())
+        .merge(purge::router())
         .merge(sms::router());
 
     let cors = CorsLayer::new()

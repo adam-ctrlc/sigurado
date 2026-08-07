@@ -24,6 +24,7 @@ use crate::{
         checkout_code_service,
         checkout_service::{self, NewCheckout, PhotoUpload},
         event_service::{self, NewEvent},
+        purge_service,
     },
     state::AppState,
 };
@@ -190,7 +191,12 @@ async fn list_checkouts(
     let page = page_of(params.page);
     let per_page = per_page_of(params.per_page);
 
+    let hidden_before = purge_service::cutoff(&state.db).await?;
+
     let mut query = Checkouts::find();
+    if let Some(since) = hidden_before {
+        query = query.filter(checkouts::Column::CreatedAt.gt(since));
+    }
 
     // Students only see their own checkouts; faculty and admin see everything.
     if auth.role == Role::Student {
@@ -254,7 +260,13 @@ async fn get_checkout(
     auth: AuthUser,
     Path(id): Path<Uuid>,
 ) -> AppResult<Json<CheckoutResponse>> {
-    let checkout = Checkouts::find_by_id(id)
+    // A record hidden by a clearing reads as gone, the same as it does in the
+    // list, rather than staying reachable by guessing its id.
+    let mut one = Checkouts::find_by_id(id);
+    if let Some(since) = purge_service::cutoff(&state.db).await? {
+        one = one.filter(checkouts::Column::CreatedAt.gt(since));
+    }
+    let checkout = one
         .one(&state.db)
         .await?
         .ok_or(AppError::NotFound("checkout"))?;

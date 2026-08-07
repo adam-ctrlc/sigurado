@@ -342,6 +342,44 @@ export const adminGuide: Guide = {
 				}
 			]
 		},
+	{
+			title: 'Clear the records, if a term is really over',
+			summary:
+				'The most dangerous button in the app, and the only one that empties every view at once. It hides rather than deletes, so it can be undone.',
+			steps: [
+				{
+					action: 'Open the page.',
+					click: 'Data, in the sidebar under Administration'
+				},
+				{
+					action: 'Read the counters first.',
+					detail:
+						'They say exactly how many reader events, checkouts, door windows, sign-ins, texts and enrollment codes would leave every view.'
+				},
+				{
+					action: 'Understand what survives.',
+					detail:
+						'Accounts, enrolled fingerprints, paired readers and the alert recipients are untouched, and the readers keep deciding exactly as they did. Clearing changes what people can read, never what the hardware does.'
+				},
+				{
+					action: 'Type the phrase exactly to arm the button.',
+					detail:
+						'DELETE ALL DATA, capitals and spacing included. The server checks it again, so a near miss does nothing on either side.',
+					click: 'Clear all records, then the confirmation box'
+				},
+				{
+					action: 'Say why, in a line.',
+					detail: 'Optional, and kept with the record of the clearing.'
+				},
+				{
+					action: 'Put it all back if you change your mind.',
+					detail:
+						'Nothing was deleted, so restoring is instant and complete.',
+					click: 'Put everything back, on the banner at the top'
+				}
+			],
+			note: 'The clearing itself is written into the audit log with your name on it, and it survives the clearing. Even an emptied trail can still say who emptied it and when.'
+		},
 		{
 			title: 'Know what you cannot change',
 			summary: 'Some things are fixed on purpose. Knowing which saves you looking for a setting.',

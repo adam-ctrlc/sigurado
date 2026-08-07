@@ -21,7 +21,7 @@
 
 <!-- Scrolls rather than shrinks: three long labels do not fit a narrow phone,
      and a squeezed tab is harder to read than one you slide to. -->
-<div class="-mx-1 max-w-full overflow-x-auto px-1 py-px">
+<div class="scrollbar-none -mx-1 max-w-full overflow-x-auto px-1 py-px">
 	<nav
 		class="bg-muted text-muted-foreground inline-flex w-fit items-center justify-center gap-0.5 rounded-lg p-[3px]"
 		aria-label="Sections"

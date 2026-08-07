@@ -93,7 +93,7 @@
 	{@render children()}
 
 	<!-- The tab strip sits under the grid, where a spreadsheet keeps it. -->
-	<div class="-mx-1 max-w-full overflow-x-auto px-1 py-px">
+	<div class="scrollbar-none -mx-1 max-w-full overflow-x-auto px-1 py-px">
 		<nav
 			class="bg-muted inline-flex w-fit items-end gap-1 rounded-lg p-1"
 			aria-label="Sheet tabs"

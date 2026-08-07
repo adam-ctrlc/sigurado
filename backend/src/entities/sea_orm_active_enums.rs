@@ -96,6 +96,10 @@ pub enum AccessEventType {
     /// to them, or one already spent.
     #[sea_orm(string_value = "checkout_code_rejected")]
     CheckoutCodeRejected,
+    #[sea_orm(string_value = "data_cleared")]
+    DataCleared,
+    #[sea_orm(string_value = "data_restored")]
+    DataRestored,
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, EnumIter, DeriveActiveEnum, Serialize, Deserialize)]

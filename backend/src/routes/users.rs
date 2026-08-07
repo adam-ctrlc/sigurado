@@ -17,7 +17,7 @@ use crate::{
     entities::{fingerprints, login_events, prelude::*, sea_orm_active_enums::Role, users},
     error::{AppError, AppResult},
     pagination::{Page, page_of, per_page_of, search_term},
-    services::sms_service,
+    services::{purge_service, sms_service},
     state::AppState,
     util,
 };
@@ -418,7 +418,11 @@ async fn list_logins(
     let page = page_of(params.page);
     let per_page = per_page_of(params.per_page);
 
-    let paginator = LoginEvents::find()
+    let mut logins = LoginEvents::find();
+    if let Some(since) = purge_service::cutoff(&state.db).await? {
+        logins = logins.filter(login_events::Column::CreatedAt.gt(since));
+    }
+    let paginator = logins
         .filter(login_events::Column::UserId.eq(id))
         .order_by_desc(login_events::Column::CreatedAt)
         .paginate(&state.db, per_page);

@@ -8,6 +8,7 @@ pub mod access_events;
 pub mod access_sessions;
 pub mod checkout_codes;
 pub mod checkouts;
+pub mod data_purges;
 pub mod device_connections;
 pub mod devices;
 pub mod enrollment_sessions;

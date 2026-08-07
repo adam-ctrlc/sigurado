@@ -7,10 +7,12 @@
 	import ScrollTextIcon from '@lucide/svelte/icons/scroll-text';
 	import FlagIcon from '@lucide/svelte/icons/flag';
 	import BookOpenIcon from '@lucide/svelte/icons/book-open';
+	import UserRoundIcon from '@lucide/svelte/icons/user-round';
 	import UsersIcon from '@lucide/svelte/icons/users';
 	import HardDriveIcon from '@lucide/svelte/icons/hard-drive';
 	import MessageSquareIcon from '@lucide/svelte/icons/message-square';
 	import TableIcon from '@lucide/svelte/icons/table';
+	import DatabaseIcon from '@lucide/svelte/icons/database';
 	import ShieldCheckIcon from '@lucide/svelte/icons/shield-check';
 	import LogOutIcon from '@lucide/svelte/icons/log-out';
 import XIcon from '@lucide/svelte/icons/x';
@@ -45,6 +47,15 @@ import XIcon from '@lucide/svelte/icons/x';
 		{ href: '/checkout', label: 'Checkout', icon: PackageCheckIcon, roles: ['student', 'faculty', 'admin'] }
 	];
 
+	const account: NavItem[] = [
+		{
+			href: '/profile',
+			label: 'Profile',
+			icon: UserRoundIcon,
+			roles: ['student', 'faculty', 'admin']
+		}
+	];
+
 	const help: NavItem[] = [
 		{ href: '/guides', label: 'Guides', icon: BookOpenIcon, roles: ['student', 'faculty', 'admin'] }
 	];
@@ -53,7 +64,8 @@ import XIcon from '@lucide/svelte/icons/x';
 		{ href: '/admin/users', label: 'Users', icon: UsersIcon, roles: ['admin'] },
 		{ href: '/admin/devices', label: 'Devices', icon: HardDriveIcon, roles: ['admin'] },
 		{ href: '/admin/alerts', label: 'SMS Alerts', icon: MessageSquareIcon, roles: ['admin'] },
-		{ href: '/admin/sheets', label: 'Sheet', icon: TableIcon, roles: ['admin'] }
+		{ href: '/admin/sheets', label: 'Sheet', icon: TableIcon, roles: ['admin'] },
+		{ href: '/admin/data', label: 'Data', icon: DatabaseIcon, roles: ['admin'] }
 	];
 
 	const role = $derived(auth.user?.role ?? 'student');
@@ -61,6 +73,7 @@ import XIcon from '@lucide/svelte/icons/x';
 		{ label: 'Monitoring', items: monitoring.filter((i) => i.roles.includes(role)) },
 		{ label: 'Access', items: access.filter((i) => i.roles.includes(role)) },
 		{ label: 'Administration', items: administration.filter((i) => i.roles.includes(role)) },
+		{ label: 'Account', items: account.filter((i) => i.roles.includes(role)) },
 		{ label: 'Help', items: help.filter((i) => i.roles.includes(role)) }
 	].filter((g) => g.items.length > 0));
 

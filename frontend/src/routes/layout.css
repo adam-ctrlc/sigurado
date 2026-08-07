@@ -13,6 +13,14 @@
 	   grid gets its own, stronger token per theme. */
 	--grid-line: oklch(0.21 0.006 285 / 10%);
 
+	/* Mixed from the foreground rather than hard coded, so each theme, light or
+	   dark, gets a scrollbar in its own ink and nothing needs redefining when a
+	   palette changes. */
+	--scrollbar-size: 10px;
+	--scrollbar-track: transparent;
+	--scrollbar-thumb: color-mix(in oklab, var(--foreground) 20%, transparent);
+	--scrollbar-thumb-hover: color-mix(in oklab, var(--foreground) 38%, transparent);
+
 	/* Neutral white and gray surfaces. Blue appears only as an accent:
 	   primary actions, focus rings and the active nav item. */
 	--background: oklch(1 0 0);
@@ -276,6 +284,35 @@
 	* {
 		@apply border-border outline-ring/50;
 	}
+
+	/* Firefox and the standard property. */
+	html {
+		scrollbar-width: thin;
+		scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);
+	}
+
+	/* Chromium and Safari, which ignore the standard property. The thumb is
+	   inset with a transparent border clipped to the padding box, so it reads as
+	   a floating pill rather than a bar wedged against the edge. */
+	::-webkit-scrollbar {
+		width: var(--scrollbar-size);
+		height: var(--scrollbar-size);
+	}
+	::-webkit-scrollbar-track {
+		background: var(--scrollbar-track);
+	}
+	::-webkit-scrollbar-thumb {
+		background-color: var(--scrollbar-thumb);
+		background-clip: padding-box;
+		border: 2px solid transparent;
+		border-radius: 999px;
+	}
+	::-webkit-scrollbar-thumb:hover {
+		background-color: var(--scrollbar-thumb-hover);
+	}
+	::-webkit-scrollbar-corner {
+		background: transparent;
+	}
 	body {
 		@apply bg-background text-foreground font-sans;
 	}
@@ -301,4 +338,36 @@
 		/* Belt and braces for older Chromium, which ignores background-clip here. */
 		transition: background-color 100000s ease-in-out 0s;
 	}
+}
+
+/* Opt-in overrides, for the places where the default is not what you want.
+   Tailwind v4 utilities, so they compose like any other class. */
+
+@utility scrollbar-none {
+	scrollbar-width: none;
+	&::-webkit-scrollbar {
+		display: none;
+	}
+}
+
+@utility scrollbar-thin {
+	--scrollbar-size: 6px;
+	scrollbar-width: thin;
+}
+
+@utility scrollbar-wide {
+	--scrollbar-size: 14px;
+	scrollbar-width: auto;
+}
+
+/* Keeps the gutter reserved, so content does not shift when a list grows long
+   enough to need scrolling. */
+@utility scrollbar-stable {
+	scrollbar-gutter: stable;
+}
+
+/* A scrollbar in the accent colour, for a panel that wants to stand out. */
+@utility scrollbar-accent {
+	--scrollbar-thumb: color-mix(in oklab, var(--primary) 45%, transparent);
+	--scrollbar-thumb-hover: var(--primary);
 }

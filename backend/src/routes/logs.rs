@@ -21,7 +21,7 @@ use crate::{
     },
     error::AppResult,
     pagination::{Page, page_of, per_page_of, search_term},
-    services::event_service::EventEnvelope,
+    services::{event_service::EventEnvelope, purge_service},
     state::AppState,
 };
 
@@ -52,7 +52,13 @@ async fn list_logs(
     let page = page_of(params.page);
     let per_page = per_page_of(params.per_page);
 
+    // Cleared history stays in the table and out of every view.
+    let hidden_before = purge_service::cutoff(&state.db).await?;
+
     let mut query = AccessEvents::find();
+    if let Some(since) = hidden_before {
+        query = query.filter(access_events::Column::CreatedAt.gt(since));
+    }
     if let Some(event_type) = params.event_type {
         query = query.filter(access_events::Column::EventType.eq(event_type));
     }

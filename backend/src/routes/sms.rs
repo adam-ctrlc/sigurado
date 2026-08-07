@@ -28,7 +28,7 @@ use crate::{
     },
     error::{AppError, AppResult},
     pagination::{Page, page_of, per_page_of},
-    services::sms_service,
+    services::{purge_service, sms_service},
     state::AppState,
     util,
 };
@@ -395,6 +395,9 @@ async fn list_messages(
     let per_page = per_page_of(params.per_page);
 
     let mut query = SmsMessages::find();
+    if let Some(since) = purge_service::cutoff(&state.db).await? {
+        query = query.filter(sms_messages::Column::CreatedAt.gt(since));
+    }
     if let Some(status) = params.status {
         query = query.filter(sms_messages::Column::Status.eq(status));
     }

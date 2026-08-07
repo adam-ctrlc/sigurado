@@ -132,7 +132,7 @@
 			tabindex="-1"
 			aria-label="Sheet"
 			onkeydown={onKeydown}
-			class="overflow-x-auto rounded-lg border outline-none"
+			class="scrollbar-thin overflow-x-auto rounded-lg border outline-none"
 		>
 			<table class="w-full border-separate border-spacing-0 text-sm">
 				<thead>

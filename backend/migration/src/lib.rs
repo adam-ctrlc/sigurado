@@ -14,6 +14,7 @@ mod m20260730_000011_create_sms;
 mod m20260730_000012_sms_recipients_are_users;
 mod m20260730_000013_create_checkout_codes;
 mod m20260730_000014_create_sheet_syncs;
+mod m20260807_000015_create_data_purges;
 
 pub struct Migrator;
 
@@ -35,6 +36,7 @@ impl MigratorTrait for Migrator {
             Box::new(m20260730_000012_sms_recipients_are_users::Migration),
             Box::new(m20260730_000013_create_checkout_codes::Migration),
             Box::new(m20260730_000014_create_sheet_syncs::Migration),
+            Box::new(m20260807_000015_create_data_purges::Migration),
         ]
     }
 }

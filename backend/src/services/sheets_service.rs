@@ -31,6 +31,7 @@ use crate::{
     },
     error::AppError,
     services::flag_service,
+    services::purge_service,
     services::sheet_rows,
     util,
 };
@@ -429,6 +430,7 @@ impl Sheets {
 
     async fn sync_events(&self, db: &DatabaseConnection) -> Result<usize, AppError> {
         let cursor = read_cursor(db, TAB_EVENTS).await?;
+        let hidden_before = purge_service::cutoff(db).await?;
         let mut query = AccessEvents::find()
             .order_by_asc(access_events::Column::CreatedAt)
             .order_by_asc(access_events::Column::Id);
@@ -444,6 +446,10 @@ impl Sheets {
                             .add(access_events::Column::Id.gt(*id)),
                     ),
             );
+        }
+
+        if let Some(since) = hidden_before {
+            query = query.filter(access_events::Column::CreatedAt.gt(since));
         }
 
         let batch = query.limit(BATCH).all(db).await?;
@@ -475,6 +481,7 @@ impl Sheets {
 
     async fn sync_checkouts(&self, db: &DatabaseConnection) -> Result<usize, AppError> {
         let cursor = read_cursor(db, TAB_CHECKOUTS).await?;
+        let hidden_before = purge_service::cutoff(db).await?;
         let mut query = Checkouts::find()
             .order_by_asc(checkouts::Column::CreatedAt)
             .order_by_asc(checkouts::Column::Id);
@@ -488,6 +495,10 @@ impl Sheets {
                             .add(checkouts::Column::Id.gt(*id)),
                     ),
             );
+        }
+
+        if let Some(since) = hidden_before {
+            query = query.filter(checkouts::Column::CreatedAt.gt(since));
         }
 
         let batch = query.limit(BATCH).all(db).await?;

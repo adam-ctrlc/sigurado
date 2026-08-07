@@ -4,6 +4,7 @@ pub use super::access_events::Entity as AccessEvents;
 pub use super::access_sessions::Entity as AccessSessions;
 pub use super::checkout_codes::Entity as CheckoutCodes;
 pub use super::checkouts::Entity as Checkouts;
+pub use super::data_purges::Entity as DataPurges;
 pub use super::device_connections::Entity as DeviceConnections;
 pub use super::devices::Entity as Devices;
 pub use super::enrollment_sessions::Entity as EnrollmentSessions;

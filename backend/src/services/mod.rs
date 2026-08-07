@@ -3,6 +3,7 @@ pub mod checkout_service;
 pub mod enrollment_service;
 pub mod event_service;
 pub mod flag_service;
+pub mod purge_service;
 pub mod session_service;
 pub mod sheet_rows;
 pub mod sheets_service;

@@ -24,7 +24,7 @@ use crate::{
     },
     error::AppError,
     pagination::Page,
-    services::flag_service,
+    services::{flag_service, purge_service},
     util,
 };
 
@@ -132,6 +132,8 @@ fn event_label(kind: &AccessEventType) -> &'static str {
         AccessEventType::EnrollBound => "Fingerprint bound",
         AccessEventType::EnrollFailed => "Enrollment failed",
         AccessEventType::CheckoutCodeRejected => "Checkout code refused",
+        AccessEventType::DataCleared => "Records cleared by an administrator",
+        AccessEventType::DataRestored => "Cleared records put back",
     }
 }
 
@@ -236,12 +238,19 @@ pub fn flag_row(f: &flag_service::Flag) -> Vec<String> {
 pub async fn daily_rows(db: &DatabaseConnection, days: i64) -> Result<Vec<Vec<String>>, AppError> {
     let since = util::now() - ChronoDuration::days(days);
 
+    // The later of the two: the window asked for, and anything a clearing hid.
+    let hidden_before = purge_service::cutoff(db).await?;
+    let floor = match hidden_before {
+        Some(hidden) if hidden > since => hidden,
+        _ => since,
+    };
+
     let events = AccessEvents::find()
-        .filter(access_events::Column::CreatedAt.gte(since))
+        .filter(access_events::Column::CreatedAt.gt(floor))
         .all(db)
         .await?;
     let taken = Checkouts::find()
-        .filter(checkouts::Column::CreatedAt.gte(since))
+        .filter(checkouts::Column::CreatedAt.gt(floor))
         .all(db)
         .await?;
     let flags = flag_service::detect(db, days).await?;
@@ -289,6 +298,9 @@ async fn events_page(
     term: Option<String>,
 ) -> Result<Page<Vec<String>>, AppError> {
     let mut query = AccessEvents::find();
+    if let Some(since) = purge_service::cutoff(db).await? {
+        query = query.filter(access_events::Column::CreatedAt.gt(since));
+    }
 
     if let Some(term) = term.as_ref() {
         // Searching a person means searching the users table first, since the
@@ -342,6 +354,9 @@ async fn checkouts_page(
     term: Option<String>,
 ) -> Result<Page<Vec<String>>, AppError> {
     let mut query = Checkouts::find();
+    if let Some(since) = purge_service::cutoff(db).await? {
+        query = query.filter(checkouts::Column::CreatedAt.gt(since));
+    }
 
     if let Some(term) = term.as_ref() {
         let people: Vec<Uuid> = Users::find()

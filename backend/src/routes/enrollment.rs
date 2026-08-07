@@ -14,7 +14,7 @@ use crate::{
         enrollment_sessions, prelude::EnrollmentSessions, sea_orm_active_enums::EnrollmentStatus,
     },
     error::AppResult,
-    services::enrollment_service,
+    services::{enrollment_service, purge_service},
     state::AppState,
 };
 
@@ -66,8 +66,12 @@ async fn mine(
     State(state): State<AppState>,
     auth: AuthUser,
 ) -> AppResult<Json<Vec<EnrollmentResponse>>> {
-    let items = EnrollmentSessions::find()
-        .filter(enrollment_sessions::Column::UserId.eq(auth.user_id))
+    let mut history =
+        EnrollmentSessions::find().filter(enrollment_sessions::Column::UserId.eq(auth.user_id));
+    if let Some(since) = purge_service::cutoff(&state.db).await? {
+        history = history.filter(enrollment_sessions::Column::CreatedAt.gt(since));
+    }
+    let items = history
         .order_by_desc(enrollment_sessions::Column::CreatedAt)
         .all(&state.db)
         .await?;
