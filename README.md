@@ -99,7 +99,10 @@ cargo run --bin seed          # creates the first administrator
 cargo run --bin backend
 ```
 
-Listens on `127.0.0.1:8080` by default.
+Listens on `127.0.0.1:8080` by default. The SQLite file lives in `backend/db/`,
+which is where `.env.example` points and the only place worth backing up. The
+server creates that folder if it is missing, so pointing `DATABASE_URL` somewhere
+new needs no `mkdir` first.
 
 ### Frontend
 

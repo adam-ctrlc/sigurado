@@ -19,8 +19,37 @@ use crate::{
     auth::jwt::JwtKeys, config::Config, services::sheets_service::Sheets, state::AppState,
 };
 
+/// Makes sure the folder holding a SQLite file exists.
+///
+/// SQLite creates the database file on demand but never the directory above it,
+/// so a fresh clone with the database under `db/` would fail on a missing path
+/// rather than on anything a person could act on.
+fn ensure_database_dir(url: &str) -> anyhow::Result<()> {
+    let Some(rest) = url
+        .strip_prefix("sqlite://")
+        .or_else(|| url.strip_prefix("sqlite:"))
+    else {
+        return Ok(());
+    };
+
+    // Options ride on the end of the URL, and an in-memory database has no path.
+    let path = rest.split('?').next().unwrap_or_default();
+    if path.is_empty() || path.starts_with(":memory:") {
+        return Ok(());
+    }
+
+    if let Some(parent) = std::path::Path::new(path).parent() {
+        if !parent.as_os_str().is_empty() {
+            std::fs::create_dir_all(parent)
+                .with_context(|| format!("creating the database folder {}", parent.display()))?;
+        }
+    }
+    Ok(())
+}
+
 /// Build shared application state from configuration and a live DB connection.
 pub async fn build_state(cfg: Config) -> anyhow::Result<AppState> {
+    ensure_database_dir(&cfg.database_url)?;
     let db = Database::connect(&cfg.database_url)
         .await
         .context("connecting to the database")?;
@@ -91,4 +120,30 @@ pub async fn run() -> anyhow::Result<()> {
     .await
     .context("running the HTTP server")?;
     Ok(())
+}
+
+#[cfg(test)]
+mod tests {
+    use super::ensure_database_dir;
+
+    #[test]
+    fn makes_the_folder_a_sqlite_file_needs() {
+        let root = std::env::temp_dir().join("sigurado-db-test");
+        let _ = std::fs::remove_dir_all(&root);
+        let url = format!("sqlite://{}/nested/app.db?mode=rwc", root.display());
+
+        ensure_database_dir(&url).expect("creates the folder");
+        assert!(root.join("nested").is_dir());
+
+        // Running twice is how a restart behaves, and it must not complain.
+        ensure_database_dir(&url).expect("is happy the second time");
+        let _ = std::fs::remove_dir_all(&root);
+    }
+
+    #[test]
+    fn leaves_alone_what_has_no_folder() {
+        ensure_database_dir("sqlite::memory:").expect("in memory needs nothing");
+        ensure_database_dir("postgres://localhost/app").expect("not our concern");
+        ensure_database_dir("sqlite://app.db").expect("no parent to create");
+    }
 }

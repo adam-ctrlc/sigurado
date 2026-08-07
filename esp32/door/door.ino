@@ -35,9 +35,7 @@
   results land in fixed buffers, and Diag reboots the node if the heap ever
   fragments past the point of safety.
 
-  Settings live in src/Config.h. Logic lives in src/ by domain, header only:
-  each module is one .h holding both its class and its definitions, so the
-  sketch is the only translation unit the IDE compiles.
+  Settings live in src/Config.h. Logic lives in src/ by domain.
 */
 
 #include "src/Config.h"

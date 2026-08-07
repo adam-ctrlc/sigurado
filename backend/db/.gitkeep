@@ -1,0 +1,2 @@
+The database lives here. The file itself is not tracked; this marker keeps the
+folder in a fresh clone so SQLite has somewhere to create it.
