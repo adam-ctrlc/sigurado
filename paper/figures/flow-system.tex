@@ -1,0 +1,62 @@
+\begin{tikzpicture}[flow, x=1mm, y=1mm,
+  side/.style = {deny, text width=16mm, minimum width=18mm},
+  end/.style = {term, minimum width=14mm}]
+
+\draw[gray!55, dashed, rounded corners=3pt] (-19,8) rectangle (19,-172);
+\draw[gray!55, dashed, rounded corners=3pt] (23,8) rectangle (84,-172);
+\draw[gray!55, dashed, rounded corners=3pt] (87,8) rectangle (119,-172);
+\node[lanetitle] at (0,9)    {ESP32 readers};
+\node[lanetitle] at (53.5,9) {Backend server};
+\node[lanetitle] at (103,9)  {Frontend website};
+
+\node[term] (s1) at (0,0)    {Start};
+\node[io]   (e1) at (0,-15)  {Read finger, send\\door:slot};
+\node[proc] (b1) at (40,-15) {Check reader\\ID and secret};
+\node[dec]  (b2) at (40,-32) {Reader and\\finger valid?};
+\node[side] (r1) at (70,-32) {Refuse,\\reply deny};
+\node[end]  (x1) at (70,-44) {Stop};
+\node[proc] (b3) at (40,-54) {Open 120~s session,\\save door grant};
+\node[proc] (e2) at (0,-54)  {Show Welcome,\\release door};
+\node[io]   (f1) at (103,-54) {Live feed on\\dashboard};
+
+\node[proc] (s2) at (0,-69)  {Walk to\\the cabinet};
+\node[io]   (e3) at (0,-84)  {Read finger, send\\cabinet:slot};
+\node[dec]  (b4) at (40,-84) {Live session\\for this user?};
+\node[side] (r2) at (70,-84) {Save refusal,\\reply deny};
+\node[end]  (x2) at (70,-97) {Stop};
+\node[proc] (b5) at (40,-104) {Issue one-time code,\\save cabinet grant,\\queue SMS};
+\node[proc] (e4) at (0,-104) {Release lock 4~s,\\show the code};
+
+\node[io]   (f2) at (103,-120) {Type code and\\borrowed items};
+\node[dec]  (b6) at (40,-136) {Code valid\\for this user?};
+\node[side] (r3) at (70,-136) {Log rejected\\code, show error};
+\node[end]  (x3) at (70,-149) {Stop};
+\node[proc] (b7) at (40,-156) {Save checkout,\\mark code spent};
+\node[proc] (f3) at (103,-156) {Checkout\\on record};
+\node[end]  (x4) at (103,-167) {Stop};
+
+\draw[arr] (s1.south) -- (e1.north);
+\draw[arr] (e1.east) -- (b1.west);
+\draw[arr] (b1.south) -- (b2.north);
+\draw[arr] (b2.east) -- node[lbl, above] {no} (r1.west);
+\draw[arr] (r1.south) -- (x1.north);
+\draw[arr] (b2.south) -- node[lbl, right] {yes} (b3.north);
+\draw[arr] (b3.west) -- node[lbl, above] {unlock} (e2.east);
+\draw[dashedarr] (b3.east) -- (f1.west);
+\draw[arr] (e2.south) -- (s2.north);
+\draw[arr] (s2.south) -- (e3.north);
+\draw[arr] (e3.east) -- (b4.west);
+\draw[arr] (b4.east) -- node[lbl, above] {no} (r2.west);
+\draw[arr] (r2.south) -- (x2.north);
+\draw[arr] (b4.south) -- node[lbl, right] {yes} (b5.north);
+\draw[arr] (b5.west) -- node[lbl, above] {code} (e4.east);
+\draw[dashedarr] (b5.east) -| (f1.south);
+\draw[dashedarr] (e4.south) |- node[lbl, above, pos=0.75] {person reads the code} (f2.west);
+\draw[arr] (f2.south) |- ($(b6.north)+(0,5)$) -- (b6.north);
+\draw[arr] (b6.east) -- node[lbl, above] {no} (r3.west);
+\draw[arr] (r3.south) -- (x3.north);
+\draw[arr] (b6.south) -- node[lbl, right] {yes} (b7.north);
+\draw[arr] (b7.east) -- (f3.west);
+\draw[arr] (f3.south) -- (x4.north);
+
+\end{tikzpicture}

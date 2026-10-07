@@ -21,6 +21,11 @@
 	--scrollbar-thumb: color-mix(in oklab, var(--foreground) 20%, transparent);
 	--scrollbar-thumb-hover: color-mix(in oklab, var(--foreground) 38%, transparent);
 
+	/* Decoration, used by the landing hero and the error pages. Defined here so
+	   those components still draw under any theme; .gold warms them up. */
+	--beam: var(--primary);
+	--glass-edge: color-mix(in oklab, var(--foreground) 25%, transparent);
+
 	/* Neutral white and gray surfaces. Blue appears only as an accent:
 	   primary actions, focus rings and the active nav item. */
 	--background: oklch(1 0 0);
@@ -212,6 +217,65 @@
 	--sidebar-accent-foreground: oklch(1 0 0);
 	--sidebar-border: oklch(1 0 0 / 45%);
 	--sidebar-ring: oklch(0.86 0.19 95);
+}
+
+/* Sigurado: a black room with one warm light in it. The app's default, and the
+   palette the public landing page is drawn for. Carries `.dark` like the other
+   dark-family themes, so every `dark:` variant in the components still
+   resolves, and it is put on a subtree rather than <html> on the landing so
+   that page keeps this look whatever theme the visitor picked. */
+.gold {
+	--grid-line: oklch(1 0 0 / 6%);
+	--background: oklch(0.08 0.004 70);
+	--foreground: oklch(0.98 0.004 85);
+	--card: oklch(0.13 0.005 70);
+	--card-foreground: oklch(0.98 0.004 85);
+	--popover: oklch(0.13 0.005 70);
+	--popover-foreground: oklch(0.98 0.004 85);
+	--primary: oklch(0.84 0.1 82);
+	--primary-foreground: oklch(0.17 0.03 70);
+	--secondary: oklch(0.19 0.006 70);
+	--secondary-foreground: oklch(0.98 0.004 85);
+	--muted: oklch(0.17 0.005 70);
+	--muted-foreground: oklch(0.72 0.012 78);
+	--accent: oklch(0.22 0.008 72);
+	--accent-foreground: oklch(0.98 0.004 85);
+	--destructive: oklch(0.7 0.19 22);
+	--destructive-foreground: oklch(0.98 0.004 85);
+	--success: oklch(0.78 0.15 155);
+	--border: oklch(1 0 0 / 9%);
+	--input: oklch(1 0 0 / 14%);
+	--ring: oklch(0.84 0.1 82);
+
+	/* Gold leads, then green and red for granted and denied, so the audit
+	   chart keeps the same vocabulary as the badges beside it. */
+	--chart-1: oklch(0.84 0.1 82);
+	--chart-2: oklch(0.78 0.15 155);
+	--chart-3: oklch(0.72 0.13 235);
+	--chart-4: oklch(0.75 0.13 320);
+	--chart-5: oklch(0.7 0.19 22);
+
+	/* A shade under the page, so the rail reads as behind the content. */
+	--sidebar: oklch(0.05 0.003 70);
+	--sidebar-foreground: oklch(0.98 0.004 85);
+	--sidebar-primary: oklch(0.84 0.1 82);
+	--sidebar-primary-foreground: oklch(0.17 0.03 70);
+	--sidebar-accent: oklch(0.19 0.006 70);
+	--sidebar-accent-foreground: oklch(0.98 0.004 85);
+	--sidebar-border: oklch(1 0 0 / 8%);
+	--sidebar-ring: oklch(0.84 0.1 82);
+
+	/* The light that falls across the landing hero from the top right, and the
+	   edge highlight on the glass tiles. Only the landing draws with these. */
+	--beam: oklch(0.9 0.11 86);
+	--glass-edge: oklch(1 0 0 / 28%);
+}
+
+/* The landing page paints the whole viewport black even when the visitor's
+   stored theme is a light one. Match the document behind it, or an overscroll
+   bounce flashes that theme's paper white. */
+body:has(.gold) {
+	background: oklch(0.08 0.004 70);
 }
 
 @theme inline {

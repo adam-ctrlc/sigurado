@@ -1,0 +1,58 @@
+\begin{tikzpicture}[flow, x=1mm, y=0.93mm,
+  proc/.append style={text width=24mm, minimum width=26mm},
+  io/.append style={text width=19mm},
+  end/.style = {term, minimum width=14mm}]
+
+\node[term] (on)   at (0,0)    {Start};
+\node[proc] (su1)  at (0,-12)  {Start serial, screen\\and lock};
+\node[dec]  (sen)  at (0,-27)  {Sensor\\found?};
+\node[deny] (hlt)  at (34,-27) {Show error\\and halt};
+\node[end]  (x1)   at (62,-27) {Stop};
+\node[proc] (su2)  at (0,-43)  {Join Wi-Fi, set clock,\\start SIM800L};
+\node[proc] (mem)  at (0,-57)  {Check free memory};
+\node[dec]  (door) at (0,-72)  {Door switch\\changed?};
+\node[proc] (buzz) at (34,-72) {Warn at 30~s,\\alarm at 60~s};
+\node[dec]  (btn)  at (0,-90)  {Enroll button\\pressed?};
+\node[proc] (enr)  at (34,-90) {Run one\\enrollment step};
+\node[io]   (poll) at (0,-106) {Poll sensor\\on UART2};
+\node[dec]  (fp)   at (0,-121) {Finger\\matched?};
+\node[io]   (scan) at (34,-121) {Send\\cabinet:slot};
+\node[dec]  (ok)   at (68,-121) {Reply is\\unlock?};
+\node[proc] (open) at (102,-137) {Release lock 4~s,\\show code 15~s};
+\node[deny] (why)  at (68,-137) {Show the reason,\\stay locked};
+\node[dec]  (hb)   at (0,-155) {30~s since\\heartbeat?};
+\node[io]   (hbs)  at (34,-155) {Send\\heartbeat};
+\node[dec]  (sms)  at (0,-173) {15~s since\\SMS check?};
+\node[io]   (smss) at (34,-173) {Send up to 3\\queued texts};
+\node[proc] (wait) at (0,-190) {Wait 50 ms};
+
+\draw[arr] (on.south) -- (su1.north);
+\draw[arr] (su1.south) -- (sen.north);
+\draw[arr] (sen.east) -- node[lbl, above] {no} (hlt.west);
+\draw[arr] (hlt.east) -- (x1.west);
+\draw[arr] (sen.south) -- node[lbl, left, pos=0.3] {yes} (su2.north);
+\draw[arr] (su2.south) -- (mem.north);
+\draw[arr] (mem.south) -- (door.north);
+\draw[arr] (door.east) -- node[lbl, above] {yes} (buzz.west);
+\draw[arr] (door.south) -- node[lbl, left, pos=0.15] {no} (btn.north);
+\draw[arr] (buzz.south) |- (0,-81);
+\draw[arr] (btn.east) -- node[lbl, above] {yes} (enr.west);
+\draw[arr] (enr.east) -- (52,-90) |- (mem.east);
+\draw[arr] (btn.south) -- node[lbl, left, pos=0.3] {no} (poll.north);
+\draw[arr] (poll.south) -- (fp.north);
+\draw[arr] (fp.east) -- node[lbl, above] {yes} (scan.west);
+\draw[arr] (scan.east) -- (ok.west);
+\draw[arr] (ok.east) -| node[lbl, above, pos=0.25] {yes} (open.north);
+\draw[arr] (ok.south) -- node[lbl, right] {no} (why.north);
+\draw[arr] (open.south) |- (0,-146);
+\draw (why.south) -- (68,-146);
+\draw[arr] (fp.south) -- node[lbl, left, pos=0.1] {no} (hb.north);
+\draw[arr] (hb.east) -- node[lbl, above] {yes} (hbs.west);
+\draw[arr] (hbs.south) |- (0,-164);
+\draw[arr] (hb.south) -- node[lbl, left, pos=0.15] {no} (sms.north);
+\draw[arr] (sms.east) -- node[lbl, above] {yes} (smss.west);
+\draw[arr] (smss.south) |- (0,-182);
+\draw[arr] (sms.south) -- node[lbl, left, pos=0.15] {no} (wait.north);
+\draw[arr] (wait.west) -- (-20,-190) |- node[lbl, left, pos=0.25, rotate=90, anchor=south] {repeat forever} (mem.west);
+
+\end{tikzpicture}

@@ -1,0 +1,46 @@
+\definecolor{termFill}{HTML}{E8F5E9}
+\definecolor{termStroke}{HTML}{43A047}
+\definecolor{procFill}{HTML}{E1F5FE}
+\definecolor{procStroke}{HTML}{0277BD}
+\definecolor{decFill}{HTML}{FFF9C4}
+\definecolor{decStroke}{HTML}{F9A825}
+\definecolor{ioFill}{HTML}{FFF3E0}
+\definecolor{ioStroke}{HTML}{EF6C00}
+\definecolor{stopFill}{HTML}{FCE4EC}
+\definecolor{stopStroke}{HTML}{C2185B}
+
+\tikzset{
+  flow/.style = {
+    font=\sffamily\scriptsize,
+    every node/.append style={execute at begin node=\linespread{1}\selectfont},
+    >=Stealth,
+  },
+  term/.style = {
+    rounded rectangle, draw=termStroke, thick, fill=termFill,
+    minimum width=22mm, minimum height=7mm, align=center, inner sep=2pt,
+  },
+  proc/.style = {
+    rectangle, rounded corners=2pt, draw=procStroke, thick, fill=procFill,
+    minimum width=28mm, minimum height=7mm, text width=26mm, align=center,
+    inner sep=2pt,
+  },
+  io/.style = {
+    trapezium, trapezium left angle=70, trapezium right angle=110,
+    trapezium stretches body, draw=ioStroke, thick, fill=ioFill,
+    minimum width=26mm, minimum height=7mm, text width=21mm, align=center,
+    inner sep=2pt,
+  },
+  dec/.style = {
+    diamond, aspect=2, draw=decStroke, thick, fill=decFill,
+    align=center, inner sep=0pt, text width=17mm,
+  },
+  deny/.style = {
+    proc, draw=stopStroke, fill=stopFill,
+  },
+  lanetitle/.style = {
+    font=\sffamily\footnotesize\bfseries, anchor=south,
+  },
+  arr/.style = {->, thick, draw=gray!70!black},
+  dashedarr/.style = {arr, dashed},
+  lbl/.style = {font=\sffamily\tiny, text=black!80, inner sep=2.5pt},
+}

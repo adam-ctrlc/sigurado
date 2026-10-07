@@ -1,0 +1,1767 @@
+Sigurado: A Dual-Biometric Sequential Access and Materials
+Accountability System for a Laboratory Stockroom
+
+Gerjhon Aballa, John Lloyd Abragan, and John Adam A. Cuenca
+Department of Computer Engineering
+CPE 048: Embedded Systems — COC-FA-CPE4-01
+[INSTRUCTOR NAME]
+[DUE DATE]
+
+Contents
+CHAPTER 1: INTRODUCTION
+
+1
+
+1.1 Background of the Study . . . . . . . . . . . . . . . . . . . . .
+
+1
+
+1.2 Statement of the Problem . . . . . . . . . . . . . . . . . . . . .
+
+3
+
+1.3 Objectives of the Study . . . . . . . . . . . . . . . . . . . . . .
+
+4
+
+1.4 Significance of the Study . . . . . . . . . . . . . . . . . . . . .
+
+5
+
+1.5 Scope and Limitations
+
+. . . . . . . . . . . . . . . . . . . . . .
+
+7
+
+1.6 Definition of Terms . . . . . . . . . . . . . . . . . . . . . . . . .
+
+8
+
+CHAPTER 2: SYSTEM DESIGN
+
+10
+
+2.1 System Overview . . . . . . . . . . . . . . . . . . . . . . . . .
+
+10
+
+2.2 System Architecture . . . . . . . . . . . . . . . . . . . . . . . .
+
+11
+
+2.2.1 Overall System Architecture . . . . . . . . . . . . . . .
+
+11
+
+2.2.2 Microcontroller Architecture . . . . . . . . . . . . . . . .
+
+11
+
+2.2.3 Memory Architecture . . . . . . . . . . . . . . . . . . .
+
+12
+
+2.2.4 Input and Output Architecture . . . . . . . . . . . . . .
+
+13
+
+2.2.5 Communication Architecture . . . . . . . . . . . . . . .
+
+14
+
+2.3 Block Diagram . . . . . . . . . . . . . . . . . . . . . . . . . . .
+
+15
+
+2.4 Hardware Components . . . . . . . . . . . . . . . . . . . . . .
+
+15
+
+2.5 Hardware Architecture Design . . . . . . . . . . . . . . . . . .
+
+16
+
+2.6 What a Person Sees at the Reader . . . . . . . . . . . . . . .
+
+18
+
+2.7 The Web Console . . . . . . . . . . . . . . . . . . . . . . . . .
+
+20
+
+2.7.1 The Public Page . . . . . . . . . . . . . . . . . . . . . .
+
+20
+
+2.7.2 What Each Role Sees . . . . . . . . . . . . . . . . . . .
+
+21
+
+2.7.3 The Record . . . . . . . . . . . . . . . . . . . . . . . .
+
+22
+
+2.7.4 On a Phone . . . . . . . . . . . . . . . . . . . . . . . .
+
+23
+
+i
+
+2.8 Data Flow . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+
+24
+
+2.8.1 Steps in One Complete Use . . . . . . . . . . . . . . .
+
+25
+
+2.8.2 How the Chip Runs the Instructions . . . . . . . . . . .
+
+26
+
+CHAPTER 3: TESTING AND PERFORMANCE
+
+27
+
+3.1 Unit and Integration Testing . . . . . . . . . . . . . . . . . . . .
+
+27
+
+3.2 System Testing . . . . . . . . . . . . . . . . . . . . . . . . . .
+
+28
+
+3.2.1 Testing the Assembled Readers . . . . . . . . . . . . .
+
+28
+
+3.3 Test Results . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+
+29
+
+3.4 System Requirements
+
+. . . . . . . . . . . . . . . . . . . . . .
+
+31
+
+3.5 Performance Analysis . . . . . . . . . . . . . . . . . . . . . . .
+
+33
+
+3.5.1 Use of Chip Resources . . . . . . . . . . . . . . . . . .
+
+33
+
+3.5.2 Timing . . . . . . . . . . . . . . . . . . . . . . . . . . .
+
+33
+
+3.5.3 Comparison With Published Systems . . . . . . . . . .
+
+34
+
+CHAPTER 4: CONCLUSION
+
+36
+
+4.1 Problems Encountered . . . . . . . . . . . . . . . . . . . . . .
+
+36
+
+4.1.1 Slot Numbers Meant Different People . . . . . . . . . .
+
+36
+
+4.1.2 A Reader Cannot Be Trusted to Decide . . . . . . . . .
+
+36
+
+4.1.3 One Unknown Record Emptied the Whole Page . . . .
+
+36
+
+4.1.4 Settings Were Cut Without Warning . . . . . . . . . . .
+
+36
+
+4.1.5 Electrical Problems That Only Appear in Hardware
+
+. .
+
+37
+
+. . . . . .
+
+37
+
+4.2 Troubleshooting . . . . . . . . . . . . . . . . . . . . . . . . . .
+
+37
+
+4.2.1 Finding the Empty Page Fault . . . . . . . . . . . . . .
+
+37
+
+4.2.2 Always Start With Something That Works . . . . . . . .
+
+38
+
+4.2.3 Checking Code Before Flashing . . . . . . . . . . . . .
+
+38
+
+4.1.6 The Door Reader May Not Reach the Wi-Fi
+
+ii
+
+4.3 Solutions and Conclusions . . . . . . . . . . . . . . . . . . . .
+
+38
+
+4.3.1 What We Fixed . . . . . . . . . . . . . . . . . . . . . .
+
+38
+
+4.3.2 Conclusion . . . . . . . . . . . . . . . . . . . . . . . . .
+
+39
+
+4.3.3 Recommendations . . . . . . . . . . . . . . . . . . . .
+
+40
+
+iii
+
+List of Figures
+1
+
+How the parts connect.
+
+. . . . . . . . . . . . . . . . . . . . .
+
+11
+
+2
+
+Inside one reader. Dashed boxes are parts outside the chip.
+
+15
+
+3
+
+The cabinet with its service panel removed, showing the
+electronics bay above the materials bins . . . . . . . . . . . .
+
+4
+
+Inside the reader box with the back plate removed, showing
+the board, sensor, relay and lock wiring . . . . . . . . . . . .
+
+5
+
+22
+
+The trail as a spreadsheet, with grants and refusals in the
+same list . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+
+8
+
+21
+
+The administrator dashboard, showing live sessions and the
+decisions as they arrive . . . . . . . . . . . . . . . . . . . . .
+
+7
+
+18
+
+The public page, which explains the system without exposing
+any record . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+
+6
+
+17
+
+23
+
+The site on a phone: the public page, the dashboard, and the
+checkout form where the one-time code is entered . . . . . .
+
+iv
+
+24
+
+List of Tables
+1
+
+How the chip uses its memory
+
+. . . . . . . . . . . . . . . . .
+
+13
+
+2
+
+What is connected to which pin . . . . . . . . . . . . . . . . .
+
+14
+
+3
+
+Parts used and what each one does . . . . . . . . . . . . . .
+
+16
+
+4
+
+What the door reader displays
+
+. . . . . . . . . . . . . . . . .
+
+19
+
+5
+
+What the cabinet reader displays . . . . . . . . . . . . . . . .
+
+20
+
+6
+
+What we tested and what happened . . . . . . . . . . . . . .
+
+30
+
+7
+
+What the system must do . . . . . . . . . . . . . . . . . . . .
+
+32
+
+8
+
+Timings we set, and timings still to be measured . . . . . . .
+
+34
+
+v
+
+CHAPTER 1: INTRODUCTION
+1.1 Background of the Study
+Schools lend laboratory equipment to their students and staff, and
+keeping track of what has gone out is a recognised management problem
+(Cepeda & Saludes, 2025).
+
+Cepeda and Saludes (2025) examined
+
+equipment lending at a Philippine university and reported that handling the
+process by hand left the institution weak in three areas at once: operational
+efficiency, data accuracy, and accountability. Those three weaknesses are
+the reason such institutions move to recorded, automated lending (Cepeda
+& Saludes, 2025). The gap survives because entry to a room and the
+record of what left it are governed by two separate mechanisms that never
+verify one another (Cepeda & Saludes, 2025).
+Records maintained by hand also drift away from the physical stock
+they are meant to describe (Linuwih & Handayati, 2025). Linuwih and
+Handayati (2025) counted stock against the written record in a warehouse
+and found that 52.85 percent of product types did not match during a single
+stocktake. A written record that disagrees with the shelf in more than half of
+cases cannot settle a question about who holds what (Linuwih & Handayati,
+2025). Physical keys carry a separate weakness of their own (Alrawili
+et al., 2024). Alrawili et al. (2024) observe that anything a person carries,
+as opposed to something a person is, can be handed to somebody else. A
+key is therefore able to be lent, copied, or lost, after which the lock records
+only that somebody held a key rather than who that person was (Alrawili
+et al., 2024).
+Biometric identification answers that weakness directly, because a
+fingerprint belongs to the person rather than being carried by them (Alrawili
+1
+
+et al., 2024). Alrawili et al. (2024) reviewed how such systems are chosen
+and found that the choice is always a balance. A system has to be secure,
+but it also has to be convenient and robust, or it will not survive contact with
+the people who use it (Alrawili et al., 2024). Fingerprints sit at a workable
+point on that balance, being inexpensive to read and quick enough to
+complete a scan in roughly one second on low-cost hardware (Alsayaydeh
+et al., 2025).
+Fingerprint locks built on low-cost microcontrollers are now a well
+documented application of this hardware (Rahman et al., 2026). Alsayaydeh
+et al. (2025) built one using an ESP32, a small computer chip with built-in
+Wi-Fi. Their lock read a finger in roughly one second and released the door
+about five seconds later (Alsayaydeh et al., 2025). It admitted the wrong
+person 1.32 percent of the time, which is a good result (Alsayaydeh et al.,
+2025). It also turned away the right person 26.32 percent of the time, so
+nearly one legitimate user in four had to present a finger again (Alsayaydeh
+et al., 2025). That rejection figure is the convenience side of the balance
+described by Alrawili et al. (2024), on which a system that is not convenient
+will not survive contact with its users.
+A single reader also carries a limit that no improvement in sensor
+accuracy can remove, since one reader verifies only the credential
+presented to it and nothing about the person who may have entered
+alongside its user (Mohammed et al., 2025). Researchers have answered
+this by verifying a person more than once rather than by trying to perfect a
+single check (Mohammed et al., 2025). Mohammed et al. (2025) tested a
+system built this way and measured a 68 percent drop in fraudulent access.
+The gain came from requiring more than one independent confirmation
+2
+
+before granting entry, not from a more accurate sensor (Mohammed et al.,
+2025). Their framework still answered in 235 milliseconds on average, so
+the extra check did not make the system slow (Mohammed et al., 2025).
+The record itself must also resist alteration, since a saved list is only
+useful if nobody can revise it after an incident (Koisser & Sadeghi, 2023).
+Koisser and Sadeghi (2023) studied this problem across connected devices
+and describe tampering as the central weakness of digital records, which is
+why their scheme is built to make any modification detectable rather than
+merely discouraged. Read together, these findings describe one design:
+verify a person twice and bind the second check to the first (Mohammed et
+al., 2025), then hold the result where it cannot be edited (Koisser & Sadeghi,
+2023).
+1.2 Statement of the Problem
+A school stockroom cannot prove who took its materials, because
+the accountability its records are meant to provide is precisely what manual
+handling fails to deliver (Cepeda & Saludes, 2025).
+
+Two weaknesses
+
+produce this failure. A single reader verifies only the credential presented
+to it, so a person admitted alongside an authorized user is never evaluated
+and never recorded, which is the weakness Mohammed et al. (2025)
+address by requiring more than one confirmation. Written records then
+disagree with the physical stock they describe in more than half of the
+product types examined (Linuwih & Handayati, 2025), and moving those
+records onto a computer does not repair the problem, since a list that can
+still be revised afterwards carries the same weakness as a paper one
+(Koisser & Sadeghi, 2023). The institution is therefore left unable to show
+either that its list of names is complete or that nothing on it was altered
+3
+
+later, which are the two properties an accountable record requires (Koisser
+& Sadeghi, 2023; Linuwih & Handayati, 2025).
+Specifically, this study seeks to answer the following questions:
+1. How can an access system be designed so that the cabinet opens only
+for the same person who opened the door, and refuses anyone who
+followed that person in?
+2. How long should a door session stay open, and how can it be closed
+automatically once that time has passed?
+3. How can every scan, whether allowed or refused, be stored so that no
+user is able to edit or delete it afterwards?
+4. How can a written record of borrowed items be tied to a real, physical
+opening of the cabinet?
+5. How do the processors, memory, pins, and Wi-Fi of the ESP32 chip
+support each of these functions?
+6. Does the finished program behave as intended in testing, and does it
+fit within the memory of the chip with room left over?
+1.3 Objectives of the Study
+The general objective of this study is to design and build an
+embedded system that can prove who took materials from a school
+stockroom, and can store that proof in a form that nobody is able to change
+afterwards.
+The specific objectives below answer the six questions above, in the
+same order. Each objective states what the study will build or measure in
+order to settle the matching question.
+4
+
+1. To require two finger scans in order, one at the door and one at the
+cabinet, and to open the cabinet only for the same person who opened
+the door.
+2. To close the door session automatically after 120 seconds, a value
+taken from the 2 to 5 minute idle timeout that OWASP Foundation
+(2026) recommend for high-value applications, so that an unattended
+door does not stay usable.
+3. To save every scan, whether allowed or refused, in a record that no
+user can edit or delete.
+4. To require a one-time code, shown on the cabinet screen as it opens,
+before the system will accept a list of borrowed items.
+5. To document how the processors, memory, pins, and Wi-Fi of the
+ESP32 chip support each of these functions.
+6. To test the finished software and confirm that the program fits within
+the memory of the chip with room left over.
+1.4 Significance of the Study
+This study is useful to the groups described below.
+Students. Students who borrow equipment gain a fair and complete
+record. Because every scan is saved with a name and a time, a student
+cannot easily be blamed for something that somebody else removed. The
+record protects the borrower just as much as it protects the school, and it
+removes the argument that so often follows a missing item. Students also
+gain a faster way of borrowing, since there is no notebook to find and no
+queue behind the person writing in it.
+5
+
+Teachers and laboratory staff. Staff no longer need to read other
+people’s handwriting or chase students for entries that were never made.
+The list builds itself as people use the room, and it can be searched in
+seconds rather than flipped through page by page. Staff can also see at
+a glance whether a reader has stopped working, instead of discovering it
+only when something goes wrong.
+Stockroom custodians and administrators. Administrators gain
+something a notebook can never provide, which is proof. When an item
+goes missing they can see exactly who opened the cabinet, at what time,
+and what was logged against that opening. This speaks directly to the
+record inaccuracy measured by Linuwih and Handayati (2025), where more
+than half of the product types checked disagreed with their written record.
+Administrators can also see refused attempts, which reveals whether people
+are trying to enter when they should not be. That second view turns a vague
+worry about losses into a number that can be watched over time.
+The school. Laboratory equipment is expensive and school budgets
+are limited. Better records mean fewer unexplained losses, and they support
+better decisions about what needs replacing and how much to buy. Over
+several terms, the record also shows which items are used heavily and which
+sit untouched.
+Future researchers. This study documents what worked and what
+did not, including a fault discovered during testing and the measurements
+still to be taken. Other students can reuse the design, extend it to more
+rooms, or take the honest account of its limits as a starting point and avoid
+repeating the same mistakes.
+
+6
+
+1.5 Scope and Limitations
+This study covers one door and one storage cabinet inside a single
+school stockroom, served by two reader units and one server. A server is
+the computer that stores all the records and makes the decisions about who
+may enter. The system handles signing up a fingerprint, the two scans,
+the borrowing record, the saved history, and text message alerts. It also
+shows different information to students, teachers, and administrators, so that
+a student sees only their own records while an administrator sees everything.
+The study carries the following limits, and every claim made later in
+this paper should be read against them.
+1. Performance was not measured in numbers.
+
+Both readers
+
+were built, wired, flashed and exercised through the complete
+door-to-cabinet sequence, so the system is demonstrated to work.
+What the study does not provide is quantitative performance data:
+scan time, unlock time and error rates were not recorded over a
+controlled set of trials, so no such figure is claimed here.
+2. The sensor does the matching.
+
+Fingerprints are stored and
+
+compared inside the sensor itself, never on our chip. The system is
+therefore only as accurate as the sensor, and it has no way of telling
+a real finger from a fake one. Rad et al. (2024) showed that copies
+made from seaweed jelly can fool this kind of sensor.
+3. People must sign up twice. Once at the door and once at the cabinet,
+because each sensor keeps its own separate list of fingers.
+4. The borrowed list is still typed by a person. The system can prove
+7
+
+that the cabinet opened and who opened it. It cannot check whether
+the list of items typed afterwards is complete or honest.
+5. Text messages were not sent over a real network. They were tested
+using a stand-in program on the computer rather than a real SIM card
+and a real phone line.
+6. One room only. The design was not tested across several rooms or
+with several cabinets running at the same time.
+1.6 Definition of Terms
+The terms below are listed in alphabetical order and are defined as
+they are used in this study.
+Audit trail The saved list of every scan and every decision the system has
+made.
+Embedded system A small computer built into a device to do one particular
+job.
+ESP32 The chip used in this project. It is a small computer with built-in WiFi.
+Fingerprint sensor The part that reads a finger and compares it against a
+list stored inside itself.
+Memory Space inside the chip that holds the program and the data it is
+working on.
+Relay An electric switch that lets a small chip control a much stronger power
+supply.
+8
+
+Server The main computer that keeps every record and decides who may
+enter.
+Session A short time window, 120 seconds in this study, that opens when
+somebody scans at the door.
+Solenoid lock An electric lock that opens while power is sent to it and locks
+again when the power stops.
+Tailgating Walking into a room behind somebody who has just opened the
+door, without scanning a finger.
+
+9
+
+CHAPTER 2: SYSTEM DESIGN
+2.1 System Overview
+The system has three parts: a reader at the door, a reader at the
+cabinet, and one server. Each reader is an ESP32 chip with a fingerprint
+sensor, a small screen, and an electric lock.
+The readers never decide anything by themselves. When someone
+scans a finger, the sensor finds a match and gives back a slot number.
+The reader sends that number to the server. The server decides, saves
+the result, and sends back a yes or no.
+This matters because a reader hangs on a wall where anyone can
+reach it. If a reader could decide on its own, someone could open it and fool
+it. The server sits in a locked place, so the decision stays safe.
+Access happens in two steps. A finger at the door unlocks the door
+and starts a 120-second session for that one person. A finger at the cabinet
+opens it only if it belongs to the same person, and only while the session is
+still running. A registered finger with no session is refused, and the refusal
+is saved. This is the double check that Mohammed et al. (2025) found cuts
+fake entries.
+The 120-second figure is not arbitrary. OWASP Foundation (2026)
+recommend an idle timeout of 2 to 5 minutes for high-value applications,
+against 15 to 30 minutes for low-risk ones, and a stockroom of shared
+equipment belongs in the first group. We took the strictest end of that
+range. Two minutes is long enough to cross a room and reach the cabinet,
+and short enough that a person who walks away leaves nothing useful
+behind them.
+When the cabinet opens, it shows a one-time code on its screen.
+10
+
+The website will not accept a borrow record without that code. So every
+written record matches a real opening. Reader records can never be edited
+or deleted. This is the protection Koisser and Sadeghi (2023) say a log
+needs.
+2.2 System Architecture
+The architecture is described at five levels. The first covers how the
+separate parts connect to one another. The four that follow look inside a
+single reader, at its processor, its memory, the pins it uses to reach the
+outside world, and the network it speaks over.
+2.2.1 Overall System Architecture
+Figure 1 shows how the parts connect. Both readers talk to the server.
+They never talk to each other. The dashed line is a backup: if the door reader
+cannot reach the Wi-Fi, the cabinet reader can share its connection.
+Figure 1
+How the parts connect.
+Door reader
+ESP32, sensor,
+screen, lock
+backup Wi-Fi
+
+Cabinet reader
+
+Server
+
+Website
+
+keeps records,
+
+for people
+
+makes decisions
+
+to use
+
+ESP32, sensor, screen,
+lock, buzzer, SIM800L
+
+2.2.2 Microcontroller Architecture
+Both readers use the ESP32. The chip carries two processors, each
+able to run at up to 240 MHz, and is rated at 1079.96 CoreMark in that
+11
+
+configuration (Espressif Systems, 2025). Rahman et al. (2026) reviewed the
+platform and identified the combination of dual-core processing, integrated
+radios and peripheral support as its principal strength, while naming limited
+on-chip memory and real-time constraints as its standing weaknesses.
+The second processor is what makes the workload here practical.
+The fingerprint sensor is slow relative to the processor, so one core can wait
+on the sensor while the other holds the network connection open.
+2.2.3 Memory Architecture
+The chip provides 448 KB of ROM for start-up code, 520 KB of onchip RAM for running programs, and two smaller low-power regions of 8
+KB each, with the application image held in external flash and executed
+through a cache (Espressif Systems, 2025). Limited on-chip memory is the
+constraint Rahman et al. (2026) single out as the platform’s most persistent
+difficulty.
+Table 1 shows how this project uses those regions. Our program fills
+about 81 percent of the 1.2 MB partition set aside for it, which leaves room
+to grow but not a great deal of it.
+One design choice removes the memory pressure that Rahman et al.
+(2026) describe. Fingerprints are never stored on our chip; they stay inside
+the sensor, which returns only a slot number. Fingerprint data is the largest
+structure the reader would otherwise hold, so leaving it on the sensor keeps
+the 520 KB of RAM (Espressif Systems, 2025) comfortable rather than tight.
+
+12
+
+Table 1
+How the chip uses its memory
+
+Storage Size
+
+What we use it for
+
+ROM
+
+Start-up code.
+
+448 KB
+
+We do not
+
+change it.
+RAM
+
+520 KB
+
+The running program and its
+working data.
+
+Flash
+
+1.2 MB
+
+Our program. About 81% full.
+
+Sensor
+
+Inside sensor
+
+Fingerprints.
+
+Our chip never
+
+reads them.
+
+2.2.4 Input and Output Architecture
+The chip exposes 34 programmable pins, three serial ports capable
+of up to 5 MBaud, two I2C interfaces and four SPI controllers (Espressif
+Systems, 2025). Sigurado uses three of those classes and leaves SPI
+unused.
+Table 2 lists what we connected where.
+
+The fingerprint sensor
+
+is given its own serial port because it exchanges packet messages
+continuously. The screen uses I2C, which carries a display on two wires
+(Espressif Systems, 2025). The lock, button, and light need only single
+pins.
+
+13
+
+Table 2
+What is connected to which pin
+
+Part
+
+Connection
+
+Door
+
+Cabinet
+
+Fingerprint sensor
+
+Serial port 2
+
+16, 17
+
+16, 17
+
+Screen
+
+I2C
+
+21, 22
+
+21, 22
+
+Sign-up button
+
+Pin (in)
+
+4
+
+4
+
+Status light
+
+Pin (out)
+
+2
+
+2
+
+Lock switch
+
+Pin (out)
+
+5
+
+5
+
+Door closed sensor
+
+Pin (in)
+
+—
+
+18
+
+Buzzer
+
+Pin (out)
+
+—
+
+19
+
+Text message unit
+
+Serial port 1
+
+—
+
+26, 27, 25
+
+The lock pin is the only one that moves something physical. The lock
+runs on its own 12 V power, not from the chip. A relay acts as the switch
+between them. The lock stays open for 3 seconds. The cabinet also has a
+small switch that tells us whether the door really closed.
+2.2.5 Communication Architecture
+Each reader joins the school Wi-Fi and sends messages to the server.
+Each reader has its own ID and password. It does not use a person’s login.
+This matters. If someone steals a reader and opens it, they only get
+that reader’s password. They cannot pretend to be a person, and we can
+change that one password without touching the other reader. Rahman et al.
+(2026) name security setup as a common weak spot on this chip, and this
+is what it looks like in practice.
+Each reader also says “I am still here” every 30 seconds. That is how
+14
+
+the website shows which readers are working. All clocks are set from the
+internet, so every record has a matching time.
+2.3 Block Diagram
+Figure 2 shows the inside of one reader and what connects to it.
+Figure 2
+Inside one reader. Dashed boxes are parts outside the chip.
+Server
+
+Wi-Fi
+I2C
+Two processors
+
+Screen
+Fingerprint
+
+Serial 2
+240 MHz
+
+sensor
+Lock, light,
+Pins
+
+Memory
+
+button, buzzer
+Text unit
+
+Serial 1
+
+(cabinet only)
+
+2.4 Hardware Components
+Table 3 lists every part used and the job it does. Quantities are per
+reader unless the entry says otherwise. Nothing on the list is rare or difficult
+to source, which was deliberate. A part that cannot be replaced from a local
+shop is a part that ends the project on the day it fails.
+
+15
+
+Table 3
+Parts used and what each one does
+
+Part
+
+What it does
+
+ESP32 board
+
+The small computer. Runs the program
+and connects to Wi-Fi. One per reader.
+
+Fingerprint
+
+Reads a finger and checks it against its
+
+sensor (R307 or
+
+own stored list. Fingerprints never leave
+
+AS608)
+
+it.
+
+Small screen (16
+
+Shows messages. On the cabinet it also
+
+by 2)
+
+shows the one-time code.
+
+Relay and 12 V
+
+The relay is a switch. The lock runs on its
+
+lock
+
+own power, not the chip’s.
+
+Door switch
+
+Cabinet only. Tells us if the door really
+closed.
+
+SIM800L text unit
+
+Cabinet only.
+
+Sends a text when the
+
+cabinet opens or someone is refused.
+Buzzer,
+button
+
+light,
+
+The button starts sign-up.
+
+The buzzer
+
+warns if the door is left open.
+
+2.5 Hardware Architecture Design
+The cabinet and the reader box were drawn as 3D models before
+building.
+
+The cabinet has three shelves behind locked doors. All the
+
+electronics sit in a hidden space behind a screwed panel, so users never
+see them.
+
+16
+
+Figure 3
+The cabinet with its service panel removed, showing the electronics bay
+above the materials bins
+
+Figure 4 looks inside the reader box itself, with the back plate taken
+off. This is the view used to check that every part fits and to plan the wiring
+before anything was cut.
+
+17
+
+Figure 4
+Inside the reader box with the back plate removed, showing the board,
+sensor, relay and lock wiring
+
+Wiring follows Table 2. Three rules guide the layout. First, the lock
+gets its own power supply, because it pulls a lot of current when it opens
+and would otherwise restart the chip. Second, the text unit also gets its own
+supply, for the same reason. Third, one wire on the text unit needs a voltage
+reducer, because the chip’s signal is too strong for it.
+2.6 What a Person Sees at the Reader
+The person standing at the door has one screen and two lines of
+sixteen characters to work with. That limit shapes every message: there is
+no room to explain, so each line has to say one thing. The wording below is
+taken from the firmware exactly as it is displayed.
+Table 4 lists what the door reader shows. When nothing is happening
+
+18
+
+it rests on its idle message, so anybody walking up already knows what to
+do without being told.
+Table 4
+What the door reader displays
+Situation
+
+Top line
+
+Bottom line
+
+Waiting for anyone
+Finger on the sensor
+Asking the server
+Allowed in
+Finger not signed up
+Bad read
+
+Sigurado door
+Reading
+Checking...
+Welcome
+Not registered
+Did not read
+
+Signing up a finger
+No network
+
+the code
+No WiFi yet
+
+Scan finger
+hold still
+one moment
+their name
+Press enroll
+please try
+again
+Type it on site
+check settings
+
+The cabinet reader carries the harder messages, because it is the one
+that says no. Table 5 shows those. The two refusals are worded differently
+on purpose. Scan door first means the person never came through the
+door, which is the tailgating case. Scan door again means they did, but took
+longer than the session allowed. Telling those apart on the screen saves the
+person guessing what went wrong.
+
+19
+
+Table 5
+What the cabinet reader displays
+Situation
+
+Top line
+
+Bottom line
+
+Allowed in
+The one-time code
+Where to type it
+Cabinet open
+
+Unlocked
+Your code
+Type it on the
+Take what you
+
+No door scan
+Session ran out
+Door left open
+Door shut again
+Text alert going out
+
+Still locked
+Still locked
+Door is open
+Door closed
+Sending alert
+
+their name
+the code
+checkout page
+need, then
+close
+Scan door first
+Scan door again
+Please close it
+Thank you
+please wait
+
+A refused person is never left without an instruction. Every refusal
+names the thing to do next, because a screen that only says no teaches
+people to rattle the handle instead.
+2.7 The Web Console
+The readers handle the locks. Everything a person reads, types, or
+checks happens on the website. It runs in an ordinary browser and talks to
+the same server the readers do, so the console never sees a reader directly
+and cannot open anything itself.
+2.7.1 The Public Page
+Figure 5 shows what a visitor sees before signing in. It explains the
+two-scan rule and nothing else. There is no public list of people, no record
+of any opening, and no way in except the sign-in link. Accounts are created
+by an administrator, so there is no sign-up form to attack.
+
+20
+
+Figure 5
+The public page, which explains the system without exposing any record
+
+2.7.2 What Each Role Sees
+Signing in decides what the rest of the site shows. A student sees
+only their own scans and their own borrowed items. A member of faculty
+sees everything but can change nothing. An administrator runs the room:
+accounts, readers, alerts, and the stored data. The rule the site enforces is
+that a student must never see another student’s record, and that nobody at
+all can edit a reader event.
+Figure 6 shows the administrator view. The four counters along the
+top answer the question a custodian actually asks on walking in: is anyone
+inside the window right now, how many scans have happened today, how
+many were refused, and how much was taken. Below them sit the live door
+sessions, each with its own countdown, and the stream of decisions as they
+
+21
+
+arrive.
+Figure 6
+The administrator dashboard, showing live sessions and the decisions as
+they arrive
+
+2.7.3 The Record
+Figure 7 shows the trail as a spreadsheet. Every row is something
+a reader reported: a door opened, a cabinet unlocked, a finger refused, an
+enrollment code issued. Each carries the time, the person where one is
+known, the finger slot, and the reader that saw it. Refusals sit in the same
+list as grants, which is what makes a tailgating attempt countable rather than
+invisible.
+
+22
+
+Figure 7
+The trail as a spreadsheet, with grants and refusals in the same list
+
+The same page exports to CSV, so the record can be kept outside
+the system as well. The console also runs eleven checks over the trail and
+lists whatever does not add up: an opening with no borrow record behind it,
+a finger tried repeatedly and refused, an opening outside laboratory hours,
+a reader that has gone quiet. These are the questions a person would have
+to ask by hand if the record were on paper.
+2.7.4 On a Phone
+Most people will reach the site on a phone, standing at the cabinet
+with the one-time code still on the screen in front of them. The whole console
+is built to work at that size, not just to survive it. Figure 8 shows three of those
+screens.
+
+23
+
+Figure 8
+The site on a phone: the public page, the dashboard, and the checkout
+form where the one-time code is entered
+
+Three things change on a small screen. The side menu folds away
+behind a button, so the content gets the full width. The counters stack
+instead of sitting in a row. The record tables scroll sideways rather than
+shrinking their text, because a column of times squeezed to four characters
+is worse than one the reader has to push across.
+2.8 Data Flow
+This section follows one complete use of the system twice. The first
+pass describes it as a sequence of events a person in the room would
+recognise. The second describes the same sequence as the work the
+processor actually performs.
+
+24
+
+2.8.1 Steps in One Complete Use
+The sequence below traces one successful use from beginning to
+end, from the first finger at the door to the borrowed items appearing in the
+record.
+1. Someone puts a finger on the door sensor. The sensor finds a match
+and gives back a slot number.
+2. The door reader sends that number, plus its own ID and password, to
+the server.
+3. The server looks up the person, starts a 120-second session, saves
+the record, and replies “allowed”.
+4. The door reader opens the lock for 3 seconds and shows a message.
+5. Someone puts a finger on the cabinet sensor. The cabinet reader
+sends its own request.
+6. The server checks whether this is the same person who has the
+running session. If yes, it makes a one-time code and saves the
+record. If no, it refuses and saves that too.
+7. The cabinet opens, shows the code, and queues a text message. If
+the door is left open, the buzzer sounds.
+8. The person types the code and the borrowed items into the website.
+The server accepts it only if the code is still valid.
+
+25
+
+2.8.2 How the Chip Runs the Instructions
+Underneath, the chip repeats the same cycle over and over. It fetches
+an instruction, works out what it means, and does it (Espressif Systems,
+2025). Three moments show this clearly.
+Waiting for the sensor. The chip checks the serial port again and
+again to see whether a byte has arrived. Most of the time none has. This
+is why we wrote the code so it never gets stuck waiting. If it did, the Wi-Fi
+would drop.
+Building the message. The chip copies text into memory, piece by
+piece, to form the request. This is the step that uses the most memory.
+Opening the lock. This is one instruction: send power to pin 5. After
+that, the chip checks a timer on each loop. When 3 seconds have passed,
+it sends one more instruction to switch the pin off. It never pauses, so it can
+still handle other work in between.
+
+26
+
+CHAPTER 3: TESTING AND PERFORMANCE
+Testing ran at three levels. Unit tests checked the decision logic on its
+own. Integration tests checked that the website and the server agree with
+each other. System tests exercised the assembled hardware end to end,
+from a finger at the door to a borrowed item appearing in the record.
+One limit applies to everything below. The tests establish that each
+behaviour happens, not how fast or how reliably it happens over many
+attempts. Timing and error rates were not recorded across a controlled set
+of trials, so the rows marked [MEASURE] in Table 6 and Table 8 are left for
+that work.
+3.1 Unit and Integration Testing
+Unit testing means checking small pieces of code one at a time. We
+wrote 18 of these tests for the server, where the decisions are made. They
+cover three things: that passwords follow the rules, that the warning checks
+work on a quiet record as well as a busy one, and that the date maths is
+right.
+Integration testing means checking that two parts agree with each
+other. The website is checked against the server automatically. That check
+passed with no errors across 4,871 files. This catches the case where the
+server starts sending something the website does not expect.
+The reader firmware was compiled for the target board before
+flashing.
+
+Both programs built with no errors, which confirmed that the
+
+modules link correctly and that the libraries match the board.
+
+27
+
+3.2 System Testing
+System testing means using the whole thing the way a person would.
+We ran the server and the website together against a database that already
+held records. This matters. An empty database returns nothing, so a fault
+that only appears with real data would stay hidden.
+We logged in first, on purpose. It worked and returned the right
+account. This proved the system was alive, so any later failure would mean
+something real and not just a dead server.
+Then we opened each page the website uses. The record list, the
+borrow list, the active session check, and the live feed all worked. The record
+list held 39 saved events of eight different kinds. All 20 pages of the website
+loaded.
+3.2.1 Testing the Assembled Readers
+With both readers built and flashed, the complete sequence was
+exercised on the hardware itself. A registered finger at the door released
+the door lock and opened a session.
+
+The same finger at the cabinet
+
+released the cabinet within that session. The cabinet displayed its one-time
+code, and the website accepted a borrow record only when that code was
+entered.
+The refusal paths were exercised as well, since a system that only
+ever grants access has not been tested. A registered finger presented at
+the cabinet without a door session first was refused, and the refusal was
+written to the record as a tailgating attempt. A finger that had expired out of
+its session was likewise refused. In both cases the cabinet stayed shut and
+the attempt appeared in the trail with a name, a reader, and a time.
+
+28
+
+3.3 Test Results
+Table 6 records the outcome of every activity described above,
+together with the evidence behind it.
+
+Rows marked [MEASURE] are
+
+behaviours already shown to work whose performance has not yet been
+quantified.
+
+29
+
+Table 6
+What we tested and what happened
+What we tested
+
+Result
+
+How we know
+
+Software
+Server unit tests
+Website and server fit
+Door reader build
+Cabinet reader build
+Logging in
+
+Passed
+Passed
+Passed
+Passed
+Passed
+
+Record list
+Borrow list
+Session check
+Live feed
+Website pages
+
+Passed
+Passed
+Passed
+Passed
+Passed
+
+18 tests, none failed
+0 errors, 4,871 files
+Compiled, no errors
+Compiled, no errors
+Correct
+account
+returned
+39 events, 8 kinds
+Records returned
+Worked
+Stayed connected
+20 of 20 loaded
+
+Assembled hardware
+Door
+scan
+opens
+session
+Cabinet opens for same
+person
+One-time code shown
+Borrow record needs
+code
+Tailgating refused
+
+Passed
+Passed
+Passed
+Passed
+Passed
+
+Expired session refused
+Refusals recorded
+
+Passed
+Passed
+
+Not yet quantified
+Scan time
+
+[MEASURE]
+
+Unlock time
+
+[MEASURE]
+
+False acceptance rate
+
+[MEASURE]
+
+False rejection rate
+
+[MEASURE]
+
+Text messages
+
+Stand-in only
+
+30
+
+Lock
+released,
+session created
+Released inside the
+session
+Displayed on opening
+Refused without it
+No session, cabinet
+stayed shut
+Cabinet stayed shut
+Written to the trail
+Works; not timed over
+trials
+Works; not timed over
+trials
+Needs a controlled trial
+set
+Needs a controlled trial
+set
+No real SIM card
+
+We found one fault, and we report it instead of quietly fixing it,
+because it shows why testing with real data matters. The server sent all 39
+records, but the website showed none of them. The reason: the server had
+learned two new kinds of record that the website did not know about. The
+website checks the whole list at once, so one unknown item threw away all
+39. The spreadsheet page, which checks each row on its own, showed
+everything. That difference is what told us where the fault was. The saved
+records themselves were never harmed.
+3.4 System Requirements
+Table 7 states the requirements the system was designed against,
+separated into what it must do and how it must behave. These are the
+statements the tests above were written to check.
+
+31
+
+Table 7
+What the system must do
+No.
+
+Requirement
+
+What it must do
+F1
+The door opens only for a finger signed up on the door
+sensor.
+F2
+A door scan starts a session for that one person, which
+ends by itself.
+F3
+The cabinet opens only for the person holding a
+running session.
+F4
+Every decision is saved with the person, the reader,
+and the time.
+F5
+The cabinet shows a one-time code, and no borrow
+record is accepted without it.
+F6
+The website shows which readers are working.
+How it must behave
+N1
+Readers never decide on their own.
+N2
+Fingerprints never leave the sensor.
+N3
+Nobody can edit or delete a saved reader record, not
+even an administrator.
+N4
+Each reader has its own password, which can be
+changed on its own.
+N5
+The program must fit in the chip with room to spare.
+N6
+The reader must never freeze while the lock is open or
+a message is showing.
+
+Every requirement in the table was exercised during testing. F1 to
+F6 were demonstrated on the assembled readers, as recorded in Table 6.
+N1, N2 and N4 follow from how the system is built and were confirmed by
+inspection: a reader holds no decision logic, no template leaves the sensor,
+and each reader carries its own credentials. N3 was confirmed by attempting
+to edit a reader record through the interface, which offers no route to do so.
+N5 is measured below. N6 was observed on the hardware, where a second
+finger could be presented while a message was still on screen.
+32
+
+3.5 Performance Analysis
+Performance is examined here in two ways. The first is what the
+finished program demands of the chip, which the build reports exactly. The
+second is how the design sits against systems that have already been
+measured and published.
+3.5.1 Use of Chip Resources
+Our program fills about 81 percent of its 1.2 MB space. That meets
+requirement N5, but only just. Adding features later will be limited by this,
+not by speed or memory.
+RAM is not a problem, and the reason is a design choice. Fingerprints
+stay in the sensor, so the biggest piece of data never reaches our chip. That
+turns the usual tightest limit on this kind of project into a non-issue. It also
+answers the small-memory warning raised by Rahman et al. (2026).
+Speed is not a problem either. Espressif Systems (2025) rate the chip
+at 1079.96 CoreMark, a standard speed score. Our reader only waits on a
+slow sensor, builds a short message, and keeps Wi-Fi alive. Two processors
+mean the Wi-Fi keeps running while the sensor is read.
+3.5.2 Timing
+Table 8 separates the intervals fixed by the design, which are known
+exactly, from those that depend on the sensor and the network and would
+have to be timed over repeated trials.
+
+33
+
+Table 8
+Timings we set, and timings still to be measured
+
+Interval
+
+Value
+
+Status
+
+Session length
+
+120 s
+
+Set in the server
+
+Code lifetime
+
+300 s
+
+Set in the server
+
+Lock stays open
+
+3s
+
+Set in the reader
+
+Message on screen
+
+2.5 s
+
+Set in the reader
+
+“Still here” signal
+
+30 s
+
+Set in the reader
+
+Scan time
+
+[MEASURE]
+
+Observed to work; not
+timed
+
+Unlock time
+
+[MEASURE]
+
+Observed to work; not
+timed
+
+3.5.3 Comparison With Published Systems
+The figures below belong to other people’s systems. They are the
+benchmarks this system should be compared against once its own numbers
+are recorded.
+Alsayaydeh et al. (2025) measured a scan at about one second and
+an unlock at five seconds on a setup much like ours. They admitted the
+wrong person 1.32 percent of the time and turned away the right person
+26.32 percent of the time. The second figure is the warning. A system that
+rejects one honest person in four will end up propped open, and a propped
+door defeats everything behind it.
+Mohammed et al. (2025) report a mean authentication time of 235
+milliseconds and a 68 percent drop in fraudulent access. Their timing is not
+34
+
+a fair comparison, since their pipeline runs on server-class machines rather
+than a microcontroller. The 68 percent is the relevant figure: it is the scale
+of improvement that checking twice is expected to deliver, and the effect the
+door-to-cabinet sequence is built to reproduce.
+Two properties of this system have no counterpart in either study.
+Refusals are recorded as carefully as approvals, so tailgating attempts
+become a countable quantity rather than an assumption, and the refusal
+tests above confirm those records are written. Reader events are also
+append-only by construction, which is the accountability property Koisser
+and Sadeghi (2023) argue a record must have before it can be used as
+evidence.
+
+35
+
+CHAPTER 4: CONCLUSION
+4.1 Problems Encountered
+Six problems shaped the final design. The first three appeared in
+the software, where they were found and corrected. The next two were
+electrical, and were caught while the readers were being assembled. The
+last belongs to the room itself.
+4.1.1 Slot Numbers Meant Different People
+Each sensor keeps its own list of fingerprints. Slot 7 on the door
+sensor and slot 7 on the cabinet sensor are two different people. Our first
+design treated slot 7 as one person everywhere. That would have opened
+the cabinet for the wrong person, and the record would have looked perfectly
+normal.
+4.1.2 A Reader Cannot Be Trusted to Decide
+At first each reader decided by itself and then told the server. That
+is easy to build and wrong. A reader hangs on a wall. Anyone can open it
+and copy or fake its messages. Anything that decides who gets in has to be
+decided by the server.
+4.1.3 One Unknown Record Emptied the Whole Page
+Described in Chapter 3. The server learned two new kinds of record.
+The website did not know them, so it threw away all 39 records instead of
+just the two. The page looked empty, and no error was shown.
+4.1.4 Settings Were Cut Without Warning
+The server reads its settings from a text file. That file quietly cuts
+anything after a space. A name with a space in it gets shortened, and nothing
+tells you.
+36
+
+4.1.5 Electrical Problems That Only Appear in Hardware
+Three problems surfaced while the readers were being wired up. The
+lock pulls a lot of current when it opens and will restart the chip if the two
+share one supply. The text unit does the same when it sends. And one of
+its wires cannot take the chip’s full signal strength. Each of these shows up
+as a random restart, which is hard to trace back to its cause.
+4.1.6 The Door Reader May Not Reach the Wi-Fi
+The door is the farthest point from the router. A reader that cannot
+reach the server cannot ask permission, and by design it will not decide
+alone. So it opens nothing.
+4.2 Troubleshooting
+This section describes how the problems above were traced. In each
+case the useful part was not the fix but the observation that made the fault
+visible in the first place.
+4.2.1 Finding the Empty Page Fault
+The server replied correctly with a full page of data, so the server and
+the network were ruled out at once. The clue was that the spreadsheet page
+showed all 39 records while the record page showed none. Both read the
+same data, so the difference had to be in how each one read it. Comparing
+the kinds of record in the data against the kinds the website accepted found
+the two unknown ones.
+The wider lesson is what made it visible at all: we tested with real
+data. With an empty database both pages show nothing, and the fault would
+have looked like normal behaviour.
+
+37
+
+4.2.2 Always Start With Something That Works
+Every round of testing began with a request we knew should succeed.
+Without that, a test where everything fails only proves the server is off. It says
+nothing about the parts being tested.
+4.2.3 Checking Code Before Flashing
+Before the boards were flashed, the only available checks were the
+ones the tools can make: that the code compiles, that the modules link, and
+that the image fits the chip with measurable room left. Those checks caught
+real mistakes early, but they cannot show behaviour. Everything about how
+the system actually behaves came afterwards, from the assembled readers.
+4.3 Solutions and Conclusions
+This section sets out what was changed in response to those
+problems, what the study achieved, and what it was not able to show.
+4.3.1 What We Fixed
+Finger records now carry the name of the reader they came from, so
+a slot number can never be matched against the wrong sensor. The cost is
+that people sign up twice, once at each reader. We accepted that cost rather
+than hide it.
+All decisions moved to the server. Readers log in with their own ID
+and password, not a person’s, so a stolen reader gives away only itself.
+Reader records were made permanent, with no way to edit or delete them
+for anyone, including administrators. A wrong record is corrected by adding
+a right one.
+The electrical problems were solved in the wiring. The lock and the
+text unit each got their own power supply, sharing only a ground wire with
+
+38
+
+the chip, and the text unit’s weak wire got a voltage reducer. Where the door
+reader cannot reach the Wi-Fi, the cabinet reader can share its connection.
+The empty page fault is still open. The fix is to teach the website all
+the kinds of record the server sends, and to check each row on its own so
+one unknown item cannot throw away a whole page.
+4.3.2 Conclusion
+This project set out to prove who took materials from a school
+stockroom, and to record it so nobody can change it afterwards.
+The design goals were met.
+
+We documented how the chip’s
+
+processors, memory, pins, and Wi-Fi work, and showed that each one
+shaped a real decision. The clearest example is memory. By leaving
+fingerprints in the sensor, the largest piece of data never reaches the chip.
+What is usually the tightest limit on this kind of project stopped being a limit
+at all.
+The software goals were met and tested. The two-step check, the
+session, the permanent record, and the code-locked borrow list all work, and
+Chapter 3 shows the results. Safety comes from the shape of the design,
+not from one clever part. Decisions sit in one place, readers can only speak
+as themselves, and refusals are saved as carefully as approvals.
+The main goal was demonstrated. Both readers were built, flashed,
+and run through the full sequence. The cabinet refused a finger that held no
+door session, and the attempt was written to the record. What remains is
+measurement rather than function. Until scan time, unlock time, and error
+rates are recorded over repeated trials, this system cannot be set beside the
+figures reported by Alsayaydeh et al. (2025), and the 68 percent reduction
+that Mohammed et al. (2025) measured cannot be confirmed in this setting.
+39
+
+Two limits remain even now that the hardware is built. The sensor
+does the matching, so we inherit its accuracy and have no way to spot a
+fake finger; the seaweed-jelly fakes shown by Rad et al. (2024) would get
+through. And the borrow list is still typed by a person. We can prove the
+cabinet opened and who opened it, but not that the typed list is complete.
+Closing that gap would mean sensing the items themselves, which is a
+different project.
+4.3.3 Recommendations
+The following work would close the gaps this study leaves open. The
+first item matters most, because it is the difference between a system shown
+to work and a system whose performance is known.
+1. Record scan time, unlock time, and error rates over a controlled set of
+trials, so the system can be compared against published figures.
+2. Fix the empty page fault before the system is used for real.
+3. Test with a real SIM card and a real phone network.
+4. Consider a sensor with fake-finger detection, given the weakness
+shown by Rad et al. (2024).
+5. Watch the refusal count once the system runs. It shows how often
+tailgating is actually tried.
+
+40
+
+References
+Alrawili, R., AlQahtani, A. A. S., & Khan, M. K. (2024). Comprehensive
+survey: Biometric user authentication application, evaluation, and
+discussion. Computers and Electrical Engineering, 119, 109485.
+https://doi.org/10.1016/j.compeleceng.2024.109485
+Alsayaydeh,
+
+J. A.
+
+J., Yusof,
+
+M.
+
+F.,
+
+Mamchenko,
+
+S.,
+
+Hamzah,
+
+R. A., & Herawan, S. G. (2025). Design and evaluation
+of a biometric IoT-based smart lock system with real-time
+monitoring
+of
+
+and
+
+Advanced
+
+alert
+
+mechanisms.
+
+Computer
+
+Science
+
+and
+
+International
+Applications,
+
+Journal
+16(7).
+
+https://doi.org/10.14569/IJACSA.2025.0160737
+Cepeda, J. A. U., & Saludes, A. J. C. (2025). Online ICT equipment inventory
+and borrowing system with decision support. European Journal of
+Innovative Studies and Sustainability, 1(5), 62–70. https : / / doi . org /
+10.59324/ejiss.2025.1(5).07
+Espressif Systems. (2025). ESP32 series datasheet (Version 5.3). https :
+/ / www . espressif . com / sites / default / files / documentation / esp32 _
+datasheet_en.pdf
+Koisser, D., & Sadeghi, A.-R. (2023). Accountability of things: Large-scale
+tamper-evident logging for smart devices. arXiv: 2308 . 05557
+[cs.CR]. https://arxiv.org/abs/2308.05557
+Linuwih, H. W., & Handayati, Y. (2025). Quantitative analysis of inventory
+record inaccuracy (IRI): A case study on warehouse stock
+discrepancies. International Journal of Current Science Research
+and Review, 8(1). https://doi.org/10.47191/IJCSRR/V8-I1-26
+
+41
+
+Mohammed, A., Salama, A., Shebka, N., & Ismail, A. (2025). Enhancing
+network access control using multi-modal biometric authentication
+framework. Engineering, Technology & Applied Science Research,
+15(1), 20144–20150. https://doi.org/10.48084/etasr.9554
+OWASP
+
+Foundation.
+
+(2026).
+
+Session
+
+management
+
+cheat
+
+sheet
+
+[Continuously maintained; last revised August 2026]. Retrieved
+September 11, 2026, from https : / / cheatsheetseries . owasp . org /
+cheatsheets/Session_Management_Cheat_Sheet.html
+Rad, P., Dorai, G., & Jozani, M. (2024). From seaweed to security: The
+emergence of alginate in compromising IoT fingerprint sensors. arXiv:
+2404.02150 [cs.CR]. https://arxiv.org/abs/2404.02150
+Rahman, M. H., Shihab, M., Rahman, M. A., & Naderuzzaman,
+M. (2026). ESP32 microcontroller: A review of architecture,
+communication protocols, applications and research challenges.
+Open Access Journal on Engineering Applications, 1(2), 19–33.
+https://doi.org/10.64886/oajea.0102.003
+
+42
+
+

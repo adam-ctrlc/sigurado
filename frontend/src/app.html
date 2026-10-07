@@ -6,13 +6,13 @@
 		<meta name="text-scale" content="scale" />
 		<script>
 			// Paint in the stored theme before first render, so there is no flash.
+			// Kept in step with src/lib/stores/theme.svelte.ts by hand: this has to
+			// run before the bundle loads, so it cannot import from it.
 			try {
 				var t = localStorage.getItem('sigurado.theme');
-				var all = ['light', 'paper', 'dark', 'tech', 'contrast'];
-				if (all.indexOf(t) === -1) {
-					t = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-				}
-				var dark = t === 'dark' || t === 'tech' || t === 'contrast';
+				var all = ['gold', 'light', 'paper', 'dark', 'tech', 'contrast'];
+				if (all.indexOf(t) === -1) t = 'gold';
+				var dark = t === 'gold' || t === 'dark' || t === 'tech' || t === 'contrast';
 				var r = document.documentElement;
 				if (dark) r.classList.add('dark');
 				if (t !== 'light' && t !== 'dark') r.classList.add(t);

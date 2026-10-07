@@ -1,0 +1,35 @@
+\begin{tikzpicture}[flow, x=1mm, y=1mm,
+  end/.style = {term, minimum width=14mm}]
+
+\node[term] (rst)  at (0,14)   {Start};
+\node[proc] (pc)   at (0,0)    {Next address in the\\program counter};
+\node[dec]  (hit)  at (0,-17)  {In cache\\or IRAM?};
+\node[proc] (fill) at (40,-17) {Cache loads a line\\from external flash};
+\node[proc] (fet)  at (0,-35)  {Fetch the instruction};
+\node[proc] (dcd)  at (0,-49)  {Decode opcode\\and registers};
+\node[dec]  (kind) at (0,-66)  {Kind of\\instruction?};
+\node[proc] (alu)  at (-36,-85) {Arithmetic in\\registers (ALU)\\e.g. timer checks};
+\node[proc] (ram)  at (0,-85)   {Load or store\\in internal RAM\\e.g. the request};
+\node[proc] (per)  at (36,-85)  {Load or store to a\\peripheral register\\e.g. UART2, GPIO 5};
+\node[proc] (adv)  at (0,-104)  {Write the result,\\advance the counter};
+\node[dec]  (pwr)  at (0,-121)  {Power\\still on?};
+\node[end]  (x1)   at (0,-138)  {Stop};
+
+\draw[arr] (rst.south) -- (pc.north);
+\draw[arr] (pc.south) -- (hit.north);
+\draw[arr] (hit.east) -- node[lbl, above] {no} (fill.west);
+\draw[arr] (fill.south) |- (0,-27);
+\draw[arr] (hit.south) -- node[lbl, left, pos=0.3] {yes} (fet.north);
+\draw[arr] (fet.south) -- (dcd.north);
+\draw[arr] (dcd.south) -- (kind.north);
+\draw[arr] (kind.west) -| node[lbl, above, pos=0.3] {arithmetic} (alu.north);
+\draw[arr] (kind.south) -- node[lbl, right] {memory} (ram.north);
+\draw[arr] (kind.east) -| node[lbl, above, pos=0.3] {peripheral} (per.north);
+\draw[arr] (alu.south) |- (adv.west);
+\draw[arr] (ram.south) -- (adv.north);
+\draw[arr] (per.south) |- (adv.east);
+\draw[arr] (adv.south) -- (pwr.north);
+\draw[arr] (pwr.west) -- node[lbl, above, pos=0.2] {yes} (-56,-121) |- (pc.west);
+\draw[arr] (pwr.south) -- node[lbl, right] {no} (x1.north);
+
+\end{tikzpicture}

@@ -79,6 +79,8 @@ coverage/
 # --------------------------------------------------------------- firmware --
 # Arduino build output, and anything holding a device secret.
 build/
+# Which board is the door and which is the cabinet, on this machine only.
+nodes.json
 *.hex
 *.elf
 *.bin
@@ -194,3 +196,26 @@ tmp/
 temp/
 scratch/
 *.tmp
+
+# --------------------------------------------------------------- paper --
+# LaTeX intermediates; main.pdf itself is kept.
+paper/*.aux
+paper/*.bbl
+paper/*.bcf
+paper/*.blg
+paper/*.fdb_latexmk
+paper/*.fff
+paper/*.fls
+paper/*.lof
+paper/*.log
+paper/*.lot
+paper/*.out
+paper/*.run.xml
+paper/*.synctex.gz
+paper/*.toc
+paper/*.ttt
+# The course handout, not ours to publish.
+paper/FINAL PROJECT GUIDE.pdf
+
+# ------------------------------------------------------------- windows --
+*.lnk

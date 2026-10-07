@@ -4,6 +4,7 @@
 	import CpuIcon from '@lucide/svelte/icons/cpu';
 	import NotebookIcon from '@lucide/svelte/icons/notebook-text';
 	import ContrastIcon from '@lucide/svelte/icons/contrast';
+import SparklesIcon from '@lucide/svelte/icons/sparkles';
 	import CheckIcon from '@lucide/svelte/icons/check';
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu';
 	import { Button } from '$lib/components/ui/button';
@@ -17,12 +18,13 @@
 	];
 
 	const dark: Option[] = [
+		{ value: 'gold', label: 'Sigurado', hint: 'Black and gold', icon: SparklesIcon },
 		{ value: 'dark', label: 'Dark', hint: 'Neutral dark', icon: MoonIcon },
 		{ value: 'tech', label: 'Tech', hint: 'Slate and cyan', icon: CpuIcon },
 		{ value: 'contrast', label: 'Contrast', hint: 'Black and amber', icon: ContrastIcon }
 	];
 
-	const active = $derived([...light, ...dark].find((o) => o.value === theme.current) ?? light[0]);
+	const active = $derived([...dark, ...light].find((o) => o.value === theme.current) ?? dark[0]);
 </script>
 
 <DropdownMenu.Root>

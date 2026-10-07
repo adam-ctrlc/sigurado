@@ -1,0 +1,272 @@
+\chapterhead{Introduction}
+
+\sectionhead{Background of the Study}
+
+Schools lend laboratory equipment to their students and staff, and keeping track
+of what has gone out is a recognised management problem
+\parencite{cepeda2025}. \textcite{cepeda2025} examined equipment lending at a
+Philippine university and reported that handling the process by hand left the
+institution weak in three areas at once: operational efficiency, data accuracy,
+and accountability. Those three weaknesses are the reason such institutions move
+to recorded, automated lending \parencite{cepeda2025}. The gap survives because
+entry to a room and the record of what left it are governed by two separate
+mechanisms that never verify one another \parencite{cepeda2025}.
+
+Records maintained by hand also drift away from the physical stock they are
+meant to describe \parencite{linuwih2025}. \textcite{linuwih2025} counted stock
+against the written record in a warehouse and found that 52.85 percent of
+product types did not match during a single stocktake. A written record that
+disagrees with the shelf in more than half of cases cannot settle a question
+about who holds what \parencite{linuwih2025}. Physical keys carry a separate
+weakness of their own \parencite{alrawili2024}. \textcite{alrawili2024} observe
+that anything a person carries, as opposed to something a person is, can be
+handed to somebody else. A key is therefore able to be lent, copied, or lost,
+after which the lock records only that somebody held a key rather than who that
+person was \parencite{alrawili2024}.
+
+Biometric identification answers that weakness directly, because a fingerprint
+belongs to the person rather than being carried by them
+\parencite{alrawili2024}. \textcite{alrawili2024} reviewed how such systems are
+chosen and found that the choice is always a balance. A system has to be
+secure, but it also has to be convenient and robust, or it will not survive
+contact with the people who use it \parencite{alrawili2024}. Fingerprints sit at
+a workable point on that balance, being inexpensive to read and quick enough to
+complete a scan in roughly one second on low-cost hardware
+\parencite{alsayaydeh2025}.
+
+Fingerprint locks built on low-cost microcontrollers are now a well documented
+application of this hardware \parencite{rahman2026}.
+\textcite{alsayaydeh2025} built one using an ESP32, a small computer chip with
+built-in Wi-Fi. Their lock read a finger in roughly one second and released the
+door about five seconds later \parencite{alsayaydeh2025}. It admitted the wrong
+person 1.32 percent of the time, which is a good result
+\parencite{alsayaydeh2025}. It also turned away the right person 26.32 percent
+of the time, so nearly one legitimate user in four had to present a finger again
+\parencite{alsayaydeh2025}. That rejection figure is the convenience side of the
+balance described by \textcite{alrawili2024}, on which a system that is not
+convenient will not survive contact with its users.
+
+A single reader also carries a limit that no improvement in sensor accuracy can
+remove, since one reader verifies only the credential presented to it and
+nothing about the person who may have entered alongside its user
+\parencite{mohammed2025}. Researchers have answered this by verifying a person
+more than once rather than by trying to perfect a single check
+\parencite{mohammed2025}.
+\textcite{mohammed2025} tested a system built this way
+and measured a 68 percent drop in fraudulent access. The gain came from
+requiring more than one independent confirmation before granting entry, not from
+a more accurate sensor \parencite{mohammed2025}. Their framework still answered
+in 235 milliseconds on average, so the extra check did not make the system slow
+\parencite{mohammed2025}.
+
+The record itself must also resist alteration, since a saved list is only
+useful if nobody can revise it after an incident \parencite{koisser2023}.
+\textcite{koisser2023} studied this problem across connected devices and
+describe tampering as the central weakness of digital records, which is why
+their scheme is built to make any modification detectable rather than merely
+discouraged. Read together, these findings describe one design: verify a person
+twice and bind the second check to the first \parencite{mohammed2025}, then hold
+the result where it cannot be edited \parencite{koisser2023}.
+
+\sectionhead{Statement of the Problem}
+
+A school stockroom cannot prove who took its materials, because the
+accountability its records are meant to provide is precisely what manual
+handling fails to deliver \parencite{cepeda2025}. Two weaknesses produce this
+failure. A single reader verifies only the credential presented to it, so a
+person admitted alongside an authorized user is never evaluated and never
+recorded, which is the weakness \textcite{mohammed2025} address by requiring
+more than one confirmation. Written records then disagree with the physical
+stock they describe in more than half of the product types examined
+\parencite{linuwih2025}, and moving those records onto a computer does not
+repair the problem, since a list that can still be revised afterwards carries
+the same weakness as a paper one \parencite{koisser2023}. The institution is
+therefore left unable to show either that its list of names is complete or that
+nothing on it was altered later, which are the two properties an accountable
+record requires \parencite{koisser2023, linuwih2025}.
+
+Existing work addresses the parts of this problem separately, and the gap
+lies between them \parencite{alsayaydeh2025, mohammed2025, koisser2023,
+cepeda2025}. Fingerprint locks on low-cost microcontrollers guard a single
+control point \parencite{alsayaydeh2025}. Requiring more than one confirmation
+is known to cut fraudulent access, but that result was obtained by combining
+modalities at one point on server-class hardware rather than by sequencing them
+across two physical locations \parencite{mohammed2025}. Tamper-evident logging
+is well developed, and recent work brings it within reach of resource-limited
+devices \parencite{yagiz2026}, yet it is treated as a logging problem rather
+than one bound to a physical access decision \parencite{koisser2023}. Per-device
+credentials and replay resistance have likewise been demonstrated on ESP32-class
+hardware in isolation \parencite{lkhluf2026}. Equipment borrowing has been moved
+onto computers, but the written claim is not tied to a physical opening
+\parencite{cepeda2025}, which is why records still drift from the shelf
+\parencite{linuwih2025}. Across the work reviewed here
+\parencite{alsayaydeh2025, mohammed2025, koisser2023, yagiz2026,
+lkhluf2026, cepeda2025, linuwih2025}, no single reported system joins these
+into one scheme: sequential, identity-bound verification across two control
+points, running on low-cost microcontrollers, with an unalterable record
+that binds what was taken to the opening that allowed it.
+
+Specifically, this study seeks to answer the following questions:
+
+\begin{enumerate}
+  \item Can sequential, identity-bound verification across two control points be
+        implemented on low-cost microcontrollers, given that the reduction in
+        fraudulent access reported by \textcite{mohammed2025} was obtained on
+        server-class hardware?
+  \item What session lifetime binds the second check to the first without
+        obstructing legitimate use, given the rejection rate reported for
+        single-reader fingerprint locks \parencite{alsayaydeh2025} and the
+        idle-timeout range recommended for high-value applications
+        \parencite{owasp2026}?
+  \item Can an access record be held unalterable by every role, including
+        administrators, on a system of this scale, where tamper-evident logging
+        has so far been treated separately from the access decision itself
+        \parencite{koisser2023, yagiz2026}?
+  \item Can a written record of borrowed items be bound to a physical opening,
+        closing the gap left when borrowing is digitised without such a link
+        \parencite{cepeda2025, linuwih2025}?
+  \item Do the processor, memory, input/output, and communication resources of
+        the ESP32 support this combination, given the limited on-chip memory
+        identified as the platform's standing constraint \parencite{rahman2026}?
+  \item What residual weaknesses remain in a design that delegates matching to
+        the sensor, given that low-cost fingerprint modules have been shown to
+        be spoofable \parencite{rad2024}?
+\end{enumerate}
+
+\sectionhead{Objectives of the Study}
+
+The general objective of this study is to design and build an embedded system
+that can prove who took materials from a school stockroom, and can store that
+proof in a form that nobody is able to change afterwards.
+
+The specific objectives below answer the six questions above, in the same
+order, each stating what the study builds or measures to settle its
+matching question.
+
+\begin{enumerate}
+  \item To implement sequential, identity-bound verification on two low-cost
+        microcontroller readers, so that the cabinet opens only for the person
+        the door admitted, and to demonstrate it on assembled hardware rather
+        than on server-class equipment \parencite{mohammed2025}.
+  \item To set and enforce a door session lifetime of 120 seconds, taken from
+        the 2 to 5 minute idle timeout recommended for high-value applications
+        \parencite{owasp2026}, and to close it automatically.
+  \item To hold every scan, whether allowed or refused, in a record that offers
+        no route to edit or delete it for any role, administrators included
+        \parencite{koisser2023}.
+  \item To bind a written list of borrowed items to a physical opening by
+        requiring a one-time code that only the opening cabinet displays
+        \parencite{cepeda2025}.
+  \item To document how the processor, memory, input/output, and communication
+        resources of the ESP32 support this combination, and to measure what the
+        finished program costs against the limited on-chip memory that
+        \textcite{rahman2026} identify as the platform's standing constraint.
+  \item To state the residual weaknesses of the design, including those
+        inherited by delegating fingerprint matching to a sensor module of a
+        class shown to be spoofable \parencite{rad2024}.
+\end{enumerate}
+
+\sectionhead{Significance of the Study}
+
+This study is useful to the groups described below.
+
+\textbf{Students.} Students who borrow equipment gain a fair and complete
+record. Because every scan is saved with a name and a time, a student cannot
+easily be blamed for something that somebody else removed. The record protects
+the borrower just as much as it protects the school, and it removes the argument
+that so often follows a missing item. Students also gain a faster way of
+borrowing, since there is no notebook to find and no queue behind the person
+writing in it.
+
+\textbf{Teachers and laboratory staff.} Staff no longer need to read other
+people's handwriting or chase students for entries that were never made. The
+list builds itself as people use the room, and it can be searched in seconds
+rather than flipped through page by page. Staff can also see at a glance whether
+a reader has stopped working, instead of discovering it only when something goes
+wrong.
+
+\textbf{Stockroom custodians and administrators.} Administrators gain something
+a notebook can never provide, which is proof. When an item goes missing they can
+see exactly who opened the cabinet, at what time, and what was logged against
+that opening. This speaks directly to the record inaccuracy measured by
+\textcite{linuwih2025}, where more than half of the product types checked
+disagreed with their written record. Administrators can also see refused
+attempts, which reveals whether people are trying to enter when they should not
+be. That second view turns a vague worry about losses into a number that can be
+watched over time.
+
+\textbf{The school.} Laboratory equipment is expensive and school budgets are
+limited. Better records mean fewer unexplained losses, and they support better
+decisions about what needs replacing and how much to buy. Over several terms,
+the record also shows which items are used heavily and which sit untouched.
+
+\textbf{Future researchers.} This study documents what worked and what did not,
+including a fault discovered during testing and the measurements still to be
+taken. Other students can reuse the design, extend it to more rooms, or take the
+honest account of its limits as a starting point and avoid repeating the same
+mistakes.
+
+\sectionhead{Scope and Limitations}
+
+This study covers one door and one storage cabinet inside a single school
+stockroom, served by two reader units and one server. A server is the computer
+that stores all the records and makes the decisions about who may enter. The
+system handles signing up a fingerprint, the two scans, the borrowing record,
+the saved history, and text message alerts. It also shows different information
+to students, teachers, and administrators, so that a student sees only their own
+records while an administrator sees everything.
+
+The study carries the following limits, and every claim made later in this paper
+should be read against them.
+
+\begin{enumerate}
+  \item \textbf{Performance was not measured in numbers.} Both readers were
+        built, wired, flashed and exercised through the complete door-to-cabinet
+        sequence, so the system is demonstrated to work. What the study does not
+        provide is quantitative performance data: scan time, unlock time and
+        error rates were not recorded over a controlled set of trials, so no
+        such figure is claimed here.
+  \item \textbf{The sensor does the matching.} Fingerprints are stored and
+        compared inside the sensor itself, never on our chip. The system is
+        therefore only as accurate as the sensor, and it has no way of telling a
+        real finger from a fake one. \textcite{rad2024} showed that copies made
+        from seaweed jelly can fool this kind of sensor.
+  \item \textbf{People must sign up twice.} Once at the door and once at the
+        cabinet, because each sensor keeps its own separate list of fingers.
+  \item \textbf{The borrowed list is still typed by a person.} The system can
+        prove that the cabinet opened and who opened it. It cannot check whether
+        the list of items typed afterwards is complete or honest.
+  \item \textbf{Text messages were not sent over a real network.} They were
+        tested using a stand-in program on the computer rather than a real SIM
+        card and a real phone line.
+  \item \textbf{One room only.} The design was not tested across several rooms
+        or with several cabinets running at the same time.
+\end{enumerate}
+
+\sectionhead{Definition of Terms}
+
+The terms below are listed in alphabetical order and are defined as they are
+used in this study.
+
+\begin{description}
+  \item[Audit trail] The saved list of every scan and every decision the system
+        has made.
+  \item[Embedded system] A small computer built into a device to do one
+        particular job.
+  \item[ESP32] The chip used in this project. It is a small computer with
+        built-in Wi-Fi.
+  \item[Fingerprint sensor] The part that reads a finger and compares it against
+        a list stored inside itself.
+  \item[Memory] Space inside the chip that holds the program and the data it is
+        working on.
+  \item[Relay] An electric switch that lets a small chip control a much stronger
+        power supply.
+  \item[Server] The main computer that keeps every record and decides who may
+        enter.
+  \item[Session] A short time window, 120 seconds in this study, that opens when
+        somebody scans at the door.
+  \item[Solenoid lock] An electric lock that opens while power is sent to it and
+        locks again when the power stops.
+  \item[Tailgating] Walking into a room behind somebody who has just opened the
+        door, without scanning a finger.
+\end{description}

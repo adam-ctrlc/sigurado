@@ -1,0 +1,98 @@
+<!doctype html>
+<!--
+	The last resort: shown when the app itself could not render, so it cannot
+	use Tailwind, the token system, or the bundled fonts. The colors below are
+	the .gold theme's background, foreground and primary, written out by hand.
+-->
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<title>%sveltekit.status% - Sigurado</title>
+		<style>
+			:root {
+				color-scheme: dark;
+				--bg: oklch(0.08 0.004 70);
+				--fg: oklch(0.98 0.004 85);
+				--muted: oklch(0.72 0.012 78);
+				--gold: oklch(0.84 0.1 82);
+				--line: oklch(1 0 0 / 12%);
+			}
+			* {
+				box-sizing: border-box;
+			}
+			body {
+				margin: 0;
+				min-height: 100vh;
+				display: grid;
+				place-items: center;
+				padding: 2rem 1.5rem;
+				background: var(--bg);
+				color: var(--fg);
+				font-family: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+				text-align: center;
+			}
+			.glow {
+				position: fixed;
+				top: -14rem;
+				left: 50%;
+				width: 34rem;
+				height: 34rem;
+				transform: translateX(-50%);
+				border-radius: 9999px;
+				background: radial-gradient(circle, var(--gold) 0%, transparent 70%);
+				opacity: 0.18;
+				filter: blur(90px);
+				pointer-events: none;
+			}
+			main {
+				position: relative;
+				max-width: 30rem;
+			}
+			.status {
+				margin: 0;
+				font-size: 4rem;
+				font-weight: 600;
+				line-height: 1;
+				letter-spacing: -0.04em;
+				color: var(--gold);
+			}
+			h1 {
+				margin: 0.75rem 0 0;
+				font-size: 1.75rem;
+				font-weight: 600;
+				letter-spacing: -0.02em;
+			}
+			p {
+				margin: 0.75rem 0 0;
+				font-size: 0.9rem;
+				line-height: 1.6;
+				color: var(--muted);
+			}
+			a {
+				display: inline-block;
+				margin-top: 1.75rem;
+				padding: 0.6rem 1.4rem;
+				border-radius: 9999px;
+				background: var(--gold);
+				color: oklch(0.17 0.03 70);
+				font-size: 0.875rem;
+				font-weight: 600;
+				text-decoration: none;
+			}
+		</style>
+	</head>
+	<body>
+		<div class="glow"></div>
+		<main>
+			<p class="status">%sveltekit.status%</p>
+			<h1>Sigurado could not load</h1>
+			<p>%sveltekit.error.message%</p>
+			<p>
+				The readers keep working and keep recording while the console is down, so nothing that
+				happened in the lab has been lost.
+			</p>
+			<a href="/">Back to the start</a>
+		</main>
+	</body>
+</html>

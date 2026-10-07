@@ -1,0 +1,162 @@
+% Sigurado project paper. Build with MiKTeX:
+%   latexmk main.tex
+% .latexmkrc selects LuaLaTeX and biber. LuaLaTeX rather than pdfLaTeX because
+% the paper is specified in Arial, which is a system TrueType font that only
+% the Unicode engines can load directly; pdfLaTeX could only substitute a
+% Helvetica clone. The class is apa7 in student mode, which is what APA 7 calls
+% for in coursework rather than the manuscript layout used for submission.
+% floatsintext keeps figures and tables where they are written. Without it apa7
+% defers every float to the end of the document, which is the journal
+% submission convention and not what a course paper wants.
+\documentclass[stu,12pt,donotrepeattitle,floatsintext]{apa7}
+
+% Paper format as specified for submission: short bond (8.5 x 11 in), Arial 12,
+% and a 2 in left margin for binding with 1 in on the other three sides. These
+% override the APA defaults of 1 in all round and a serif face; geometry and
+% fontspec are loaded after the class so they win.
+\usepackage{fontspec}
+\setmainfont{Arial}
+\setsansfont{Arial}
+% apa7 loads geometry itself, so re-loading it with options is an option clash.
+% \geometry resets the margins on the already-loaded package instead.
+% includefoot counts the page-number footer as part of the bottom margin, so
+% nothing is printed below the 1 in line. Without it the footer sits in the
+% margin itself, about 0.5 in from the paper edge.
+\geometry{letterpaper,left=2in,right=1in,top=1in,bottom=1in,includefoot}
+
+% Text is justified, which is what was asked for. Note this is a departure from
+% APA 7, which specifies flush left with a ragged right edge.
+%
+% The apa7 class issues \raggedright twice: once when the class loads, and again
+% at the end of \maketitle. The second one is why \AtBeginDocument is not late
+% enough, so \justifying is called after \maketitle in the body below.
+% Hyphenation stays enabled because justified text without it opens large gaps
+% between words and pushes lines past the margin.
+\usepackage{ragged2e}
+
+\usepackage[american]{babel}
+\usepackage{csquotes}
+\usepackage[style=apa,backend=biber,sortcites=true,sorting=nyt]{biblatex}
+\DeclareLanguageMapping{american}{american-apa}
+\addbibresource{references.bib}
+
+% APA 7 gives tables and figures the same setup: the number in bold, the title
+% in italics beneath it, then the content, then any notes. Both captions
+% therefore sit ABOVE what they label, and both get the same gap so the two
+% kinds of float look alike. apa7's own default is 10pt, which reads as cramped
+% once the caption is above the graphic.
+\captionsetup[figure]{skip=14pt}
+\captionsetup[table]{skip=14pt}
+
+% [H] placement: floats stay exactly where they are written. Without this a
+% figure drifts to the top of a page and the paragraph it belongs to flows
+% around it, so a sentence ends up split across the image.
+\usepackage{float}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{array}
+\usepackage{tikz}
+\usetikzlibrary{shapes.geometric, shapes.misc, arrows.meta, positioning, calc, fit, backgrounds}
+\input{figures/flowchart-style}
+
+% The guide asks for numbered chapters, which apa7 does not provide, and APA
+% itself does not number headings at all. These three commands add the numbering
+% on top of the class's heading levels rather than replacing them, so the APA
+% typography (level 1 centered bold, level 2 flush-left bold, level 3 flush-left
+% bold italic) is preserved while the structure the guide lists survives.
+%
+% \chapterhead also forces a page break, so no chapter shares a page with the
+% one before it.
+\newcounter{chap}
+\newcounter{sec}[chap]
+\newcounter{subsec}[sec]
+
+\newcommand{\chapterhead}[1]{%
+  \clearpage
+  \stepcounter{chap}%
+  \section{\MakeUppercase{Chapter \thechap: #1}}%
+}
+\newcommand{\sectionhead}[1]{%
+  \stepcounter{sec}%
+  \subsection{\thechap.\thesec\hspace{0.5em}#1}%
+}
+\newcommand{\subsectionhead}[1]{%
+  \stepcounter{subsec}%
+  \subsubsection{\thechap.\thesec.\thesubsec\hspace{0.5em}#1}%
+}
+
+\title{Sigurado: A Dual-Biometric Sequential Access and Materials Accountability System for a Laboratory Stockroom}
+\shorttitle{Sigurado: Dual-Biometric Sequential Access}
+
+% apa7 builds the title block itself; \and belongs to the standard classes and
+% breaks \maketitle here. Authors sharing one affiliation go in a plain list.
+% apa7 inserts the final "and" itself, so it is not written here.
+\author{Gerjhon Aballa, John Lloyd Abragan, John Adam A. Cuenca}
+\affiliation{Department of Computer Engineering}
+\course{CPE 048: Embedded Systems --- COC-FA-CPE4-01}
+\professor{[INSTRUCTOR NAME]}
+\duedate{[DUE DATE]}
+
+% No running head, and the page number moves to the foot of the page. It is
+% centred on the text block, so it sits square under the text once the 2 in
+% binding margin is accounted for. apa7 sets a header through fancyhdr and
+% applies a separate `titlepage` style to page one, so both are overridden.
+\pagestyle{fancy}
+\fancyhf{}
+\cfoot{\thepage}
+\renewcommand{\headrulewidth}{0pt}
+% apa7 fixes fancyhdr's \headwidth to \textwidth when the class loads, which is
+% before \geometry narrows the text block. Left alone, the footer would centre
+% over the old 6.5 in width and sit half an inch right of the text.
+\setlength{\headwidth}{\textwidth}
+\fancypagestyle{titlepage}{%
+  \fancyhf{}%
+  \renewcommand{\headrulewidth}{0pt}%
+}
+
+\begin{document}
+\maketitle
+
+% Undo the \raggedright that apa7 leaves behind at the end of \maketitle. The
+% paragraph indent it also sets there has to be restored by hand.
+\justifying
+\setlength{\parindent}{0.5in}
+
+% No automatic hyphenation: whole words wrap to the next line rather than being
+% split across two. Existing hyphens in words like "trade-off" may still break,
+% since that is the word's own punctuation and not an invented division.
+%
+% Justified text without hyphenation has far fewer legal break points, so
+% emergencystretch is set wide to let TeX loosen the spacing on a stubborn line
+% instead of running it past the right margin.
+\hyphenpenalty=10000
+\setlength{\emergencystretch}{6em}
+
+% Front matter is numbered i, ii, iii so that arabic 1 can begin on the
+% Introduction, which is where the guide's Chapter 1 starts. The title page
+% is not numbered at all.
+\clearpage
+\pagenumbering{roman}
+\setcounter{page}{1}
+
+\tableofcontents
+\clearpage
+\listoffigures
+\clearpage
+\listoftables
+
+% Arabic numbering restarts here. \chapterhead issues its own \clearpage,
+% so the Introduction opens a fresh page as page 1.
+\clearpage
+\pagenumbering{arabic}
+\setcounter{page}{1}
+
+\input{sections/01-introduction}
+\input{sections/02-system-design}
+\input{sections/03-testing}
+\input{sections/04-conclusion}
+
+\printbibliography
+
+\end{document}

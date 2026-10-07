@@ -1,0 +1,35 @@
+\begin{tikzpicture}[flow, x=1mm, y=1mm,
+  end/.style = {term, minimum width=14mm}]
+
+\node[term] (st)   at (0,0)    {Start};
+\node[proc] (open) at (0,-12)  {Open the\\checkout page};
+\node[dec]  (auth) at (0,-27)  {Signed in?};
+\node[proc] (lgn)  at (38,-27) {Go to the\\sign-in page};
+\node[end]  (x1)   at (66,-27) {Stop};
+\node[proc] (ask)  at (0,-44)  {Every 5~s, ask if a\\code is waiting};
+\node[dec]  (wait) at (0,-60)  {Code\\waiting?};
+\node[deny] (none) at (38,-60) {Say the cabinet has\\not issued a code};
+\node[io]   (type) at (0,-77)  {Type items\\and the code};
+\node[io]   (post) at (0,-92)  {Submit to\\/checkouts};
+\node[dec]  (chk)  at (0,-109) {Code valid\\for this user?};
+\node[deny] (bad)  at (38,-109) {Log rejected code,\\show the error};
+\node[proc] (save) at (0,-127) {Save checkout,\\mark code spent};
+\node[end]  (x2)   at (0,-140) {Stop};
+
+\draw[arr] (st.south) -- (open.north);
+\draw[arr] (open.south) -- (auth.north);
+\draw[arr] (auth.east) -- node[lbl, above] {no} (lgn.west);
+\draw[arr] (lgn.east) -- (x1.west);
+\draw[arr] (auth.south) -- node[lbl, right] {yes} (ask.north);
+\draw[arr] (ask.south) -- (wait.north);
+\draw[arr] (wait.east) -- node[lbl, above] {no} (none.west);
+\draw[arr] (none.north) |- (ask.east);
+\draw[arr] (wait.south) -- node[lbl, right] {yes} (type.north);
+\draw[arr] (type.south) -- (post.north);
+\draw[arr] (post.south) -- (chk.north);
+\draw[arr] (chk.east) -- node[lbl, above] {no} (bad.west);
+\draw[arr] (bad.north) |- (type.east);
+\draw[arr] (chk.south) -- node[lbl, right] {yes} (save.north);
+\draw[arr] (save.south) -- (x2.north);
+
+\end{tikzpicture}

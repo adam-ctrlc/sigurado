@@ -1,0 +1,64 @@
+\begin{tikzpicture}[flow, x=1mm, y=1mm,
+  side/.style = {deny, text width=19mm, minimum width=21mm},
+  end/.style = {term, minimum width=14mm}]
+
+\node[term] (in)   at (51,0)    {Start};
+\node[io]   (rcv)  at (51,-13)  {Receive scan\\request};
+\node[proc] (auth) at (51,-27)  {Read reader ID\\and secret headers};
+\node[dec]  (dev)  at (51,-43)  {Known and\\active reader?};
+\node[side] (401)  at (88,-43)  {Reply 401,\\nothing saved};
+\node[end]  (x1)   at (113,-43) {Stop};
+\node[dec]  (tok)  at (51,-61)  {Finger bound\\to a user?};
+\node[side] (unr)  at (88,-61)  {Save refusal:\\unregistered};
+\node[end]  (x2)   at (113,-61) {Stop};
+\node[dec]  (kind) at (51,-79)  {Door or\\cabinet?};
+
+\node[dec]  (act)  at (24,-97)  {Account\\active?};
+\node[side] (ina)  at (-7,-97)  {Save refusal:\\account inactive};
+\node[end]  (x3)   at (-7,-110) {Stop};
+\node[proc] (sess) at (24,-115) {Open or extend\\session to now + 120~s};
+\node[proc] (dg)   at (24,-130) {Save door grant};
+\node[proc] (du)   at (24,-143) {Reply unlock};
+\node[end]  (x4)   at (24,-155) {Stop};
+
+\node[dec]  (has)  at (78,-97)  {Open session\\for this user?};
+\node[side] (tail) at (109,-97) {Save refusal:\\no session\\(tailgating)};
+\node[end]  (x5)   at (109,-111) {Stop};
+\node[dec]  (live) at (78,-122) {Session not\\yet expired?};
+\node[side] (exp)  at (109,-122) {Close it, save\\refusal: expired};
+\node[end]  (x6)   at (109,-135) {Stop};
+\node[proc] (code) at (78,-140) {Issue 6-character\\code, valid 15 min};
+\node[proc] (bg)   at (78,-154) {Save cabinet grant};
+\node[proc] (bu)   at (78,-167) {Reply unlock\\with the code};
+\node[end]  (x7)   at (78,-180) {Stop};
+
+\draw[arr] (in.south) -- (rcv.north);
+\draw[arr] (rcv.south) -- (auth.north);
+\draw[arr] (auth.south) -- (dev.north);
+\draw[arr] (dev.east) -- node[lbl, above] {no} (401.west);
+\draw[arr] (401.east) -- (x1.west);
+\draw[arr] (dev.south) -- node[lbl, right] {yes} (tok.north);
+\draw[arr] (tok.east) -- node[lbl, above] {no} (unr.west);
+\draw[arr] (unr.east) -- (x2.west);
+\draw[arr] (tok.south) -- node[lbl, right] {yes} (kind.north);
+\draw[arr] (kind.west) -| node[lbl, above, pos=0.3] {door} (act.north);
+\draw[arr] (kind.east) -| node[lbl, above, pos=0.3] {cabinet} (has.north);
+
+\draw[arr] (act.west) -- node[lbl, above] {no} (ina.east);
+\draw[arr] (ina.south) -- (x3.north);
+\draw[arr] (act.south) -- node[lbl, right] {yes} (sess.north);
+\draw[arr] (sess.south) -- (dg.north);
+\draw[arr] (dg.south) -- (du.north);
+\draw[arr] (du.south) -- (x4.north);
+
+\draw[arr] (has.east) -- node[lbl, above] {no} (tail.west);
+\draw[arr] (tail.south) -- (x5.north);
+\draw[arr] (has.south) -- node[lbl, right] {yes} (live.north);
+\draw[arr] (live.east) -- node[lbl, above] {no} (exp.west);
+\draw[arr] (exp.south) -- (x6.north);
+\draw[arr] (live.south) -- node[lbl, right] {yes} (code.north);
+\draw[arr] (code.south) -- (bg.north);
+\draw[arr] (bg.south) -- (bu.north);
+\draw[arr] (bu.south) -- (x7.north);
+
+\end{tikzpicture}

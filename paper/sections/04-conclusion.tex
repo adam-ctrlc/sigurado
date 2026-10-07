@@ -1,0 +1,144 @@
+\chapterhead{Conclusion}
+
+\sectionhead{Problems Encountered}
+
+Six problems shaped the final design. The first three appeared in the software, where they were found and corrected. The next two were electrical, and were caught while the readers were being assembled. The last belongs to the room itself.
+
+\subsectionhead{Slot Numbers Meant Different People}
+
+Each sensor keeps its own list of fingerprints. Slot 7 on the door sensor and
+slot 7 on the cabinet sensor are two different people. Our first design treated
+slot 7 as one person everywhere. That would have opened the cabinet for the
+wrong person, and the record would have looked perfectly normal.
+
+\subsectionhead{A Reader Cannot Be Trusted to Decide}
+
+At first each reader decided by itself and then told the server. That is easy to
+build and wrong. A reader hangs on a wall. Anyone can open it and copy or fake
+its messages. Anything that decides who gets in has to be decided by the server.
+
+\subsectionhead{One Unknown Record Emptied the Whole Page}
+
+Described in Chapter 3. The server learned two new kinds of record. The website
+did not know them, so it threw away all 39 records instead of just the two. The
+page looked empty, and no error was shown.
+
+\subsectionhead{Settings Were Cut Without Warning}
+
+The server reads its settings from a text file. That file quietly cuts anything
+after a space. A name with a space in it gets shortened, and nothing tells you.
+
+\subsectionhead{Electrical Problems That Only Appear in Hardware}
+
+Three problems surfaced while the readers were being wired up. The lock
+pulls a lot of current when it opens and will restart the chip if the two
+share one supply. The text unit does the same when it sends. And one of its
+wires cannot take the chip's full signal strength. Each of these shows up as
+a random restart, which is hard to trace back to its cause.
+
+\subsectionhead{The Door Reader May Not Reach the Wi-Fi}
+
+The door is the farthest point from the router. A reader that cannot reach the
+server cannot ask permission, and by design it will not decide alone. So it
+opens nothing.
+
+\sectionhead{Troubleshooting}
+
+This section describes how the problems above were traced. In each case the useful part was not the fix but the observation that made the fault visible in the first place.
+
+\subsectionhead{Finding the Empty Page Fault}
+
+The server replied correctly with a full page of data, so the server and the
+network were ruled out at once. The clue was that the spreadsheet page showed
+all 39 records while the record page showed none. Both read the same data, so
+the difference had to be in how each one read it. Comparing the kinds of record
+in the data against the kinds the website accepted found the two unknown ones.
+
+The wider lesson is what made it visible at all: we tested with real data. With
+an empty database both pages show nothing, and the fault would have looked like
+normal behaviour.
+
+\subsectionhead{Always Start With Something That Works}
+
+Every round of testing began with a request we knew should succeed. Without
+that, a test where everything fails only proves the server is off. It says
+nothing about the parts being tested.
+
+\subsectionhead{Checking Code Before Flashing}
+
+Before the boards were flashed, the only available checks were the ones the
+tools can make: that the code compiles, that the modules link, and that the
+image fits the chip with measurable room left. Those checks caught real
+mistakes early, but they cannot show behaviour. Everything about how the
+system actually behaves came afterwards, from the assembled readers.
+
+\sectionhead{Solutions and Conclusions}
+
+This section sets out what was changed in response to those problems, what the study achieved, and what it was not able to show.
+
+\subsectionhead{What We Fixed}
+
+Finger records now carry the name of the reader they came from, so a slot number
+can never be matched against the wrong sensor. The cost is that people sign up
+twice, once at each reader. We accepted that cost rather than hide it.
+
+All decisions moved to the server. Readers log in with their own ID and
+password, not a person's, so a stolen reader gives away only itself. Reader
+records were made permanent, with no way to edit or delete them for anyone,
+including administrators. A wrong record is corrected by adding a right one.
+
+The electrical problems were solved in the wiring. The lock and the text unit
+each got their own power supply, sharing only a ground wire with the chip, and
+the text unit's weak wire got a voltage reducer. Where the door reader cannot
+reach the Wi-Fi, the cabinet reader can share its connection.
+
+The empty page fault is still open. The fix is to teach the website all the
+kinds of record the server sends, and to check each row on its own so one
+unknown item cannot throw away a whole page.
+
+\subsectionhead{Conclusion}
+
+This project set out to prove who took materials from a school stockroom, and to
+record it so nobody can change it afterwards.
+
+The design goals were met. We documented how the chip's processors, memory,
+pins, and Wi-Fi work, and showed that each one shaped a real decision. The
+clearest example is memory. By leaving fingerprints in the sensor, the largest
+piece of data never reaches the chip. What is usually the tightest limit on this
+kind of project stopped being a limit at all.
+
+The software goals were met and tested. The two-step check, the session, the
+permanent record, and the code-locked borrow list all work, and Chapter 3 shows
+the results. Safety comes from the shape of the design, not from one clever
+part. Decisions sit in one place, readers can only speak as themselves, and
+refusals are saved as carefully as approvals.
+
+The main goal was demonstrated. Both readers were built, flashed, and run
+through the full sequence. The cabinet refused a finger that held no door
+session, and the attempt was written to the record. What remains is measurement
+rather than function. Until scan time, unlock time, and error rates are recorded
+over repeated trials, this system cannot be set beside the figures reported by
+\textcite{alsayaydeh2025}, and the 68 percent reduction that
+\textcite{mohammed2025} measured cannot be confirmed in this setting.
+
+Two limits remain even now that the hardware is built. The sensor does the
+matching, so we inherit its accuracy and have no way to spot a fake finger; the
+seaweed-jelly fakes shown by \textcite{rad2024} would get through. And the
+borrow list is still typed by a person. We can prove the cabinet opened and who
+opened it, but not that the typed list is complete. Closing that gap would mean
+sensing the items themselves, which is a different project.
+
+\subsectionhead{Recommendations}
+
+The following work would close the gaps this study leaves open. The first item matters most, because it is the difference between a system shown to work and a system whose performance is known.
+
+\begin{enumerate}
+  \item Record scan time, unlock time, and error rates over a controlled set
+        of trials, so the system can be compared against published figures.
+  \item Fix the empty page fault before the system is used for real.
+  \item Test with a real SIM card and a real phone network.
+  \item Consider a sensor with fake-finger detection, given the weakness shown
+        by \textcite{rad2024}.
+  \item Watch the refusal count once the system runs. It shows how often
+        tailgating is actually tried.
+\end{enumerate}

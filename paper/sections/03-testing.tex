@@ -1,0 +1,234 @@
+\chapterhead{Testing and Performance}
+
+Testing ran at three levels. Unit tests checked the decision logic on its own.
+Integration tests checked that the website and the server agree with each other.
+System tests exercised the assembled hardware end to end, from a finger at the
+door to a borrowed item appearing in the record.
+
+One limit applies to everything below. The tests establish that each behaviour
+happens, not how fast or how reliably it happens over many attempts. Timing and
+error rates were not recorded across a controlled set of trials, so the rows
+marked \textbf{[MEASURE]} in Table~\ref{tab:results} and
+Table~\ref{tab:timing} are left for that work.
+
+\sectionhead{Unit and Integration Testing}
+
+Unit testing means checking small pieces of code one at a time. We wrote 18 of
+these tests for the server, where the decisions are made. They cover three
+things: that passwords follow the rules, that the warning checks work on a quiet
+record as well as a busy one, and that the date maths is right.
+
+Integration testing means checking that two parts agree with each other. The
+website is checked against the server automatically. That check passed with no
+errors across 4{,}871 files. This catches the case where the server starts
+sending something the website does not expect.
+
+The reader firmware was compiled for the target board before flashing. Both
+programs built with no errors, which confirmed that the modules link correctly
+and that the libraries match the board.
+
+\sectionhead{System Testing}
+
+System testing means using the whole thing the way a person would. We ran the
+server and the website together against a database that already held records.
+This matters. An empty database returns nothing, so a fault that only appears
+with real data would stay hidden.
+
+We logged in first, on purpose. It worked and returned the right account. This
+proved the system was alive, so any later failure would mean something real and
+not just a dead server.
+
+Then we opened each page the website uses. The record list, the borrow list, the
+active session check, and the live feed all worked. The record list held 39
+saved events of eight different kinds. All 20 pages of the website loaded.
+
+\subsectionhead{Testing the Assembled Readers}
+
+With both readers built and flashed, the complete sequence was exercised on the
+hardware itself. A registered finger at the door released the door lock and
+opened a session. The same finger at the cabinet released the cabinet within
+that session. The cabinet displayed its one-time code, and the website accepted
+a borrow record only when that code was entered.
+
+The refusal paths were exercised as well, since a system that only ever grants
+access has not been tested. A registered finger presented at the cabinet without
+a door session first was refused, and the refusal was written to the record as a
+tailgating attempt. A finger that had expired out of its session was likewise
+refused. In both cases the cabinet stayed shut and the attempt appeared in the
+trail with a name, a reader, and a time.
+
+\sectionhead{Test Results}
+
+Table~\ref{tab:results} records the outcome of every activity described above,
+together with the evidence behind it. Rows marked \textbf{[MEASURE]} are
+behaviours already shown to work whose performance has not yet been quantified.
+
+\begin{table}[H]
+\centering
+\caption{What we tested and what happened}
+\label{tab:results}
+% APA permits single spacing within a table. Needed here: at double
+% spacing this one runs a few points past the bottom of the page.
+\linespread{1}\selectfont
+\begin{tabular}{@{}p{46mm}p{26mm}p{42mm}@{}}
+\toprule
+What we tested & Result & How we know \\
+\midrule
+\multicolumn{3}{@{}l}{\textit{Software}} \\
+Server unit tests      & Passed & 18 tests, none failed \\
+Website and server fit & Passed & 0 errors, 4{,}871 files \\
+Door reader build      & Passed & Compiled, no errors \\
+Cabinet reader build   & Passed & Compiled, no errors \\
+Logging in             & Passed & Correct account returned \\
+Record list            & Passed & 39 events, 8 kinds \\
+Borrow list            & Passed & Records returned \\
+Session check          & Passed & Worked \\
+Live feed              & Passed & Stayed connected \\
+Website pages          & Passed & 20 of 20 loaded \\
+\midrule
+\multicolumn{3}{@{}l}{\textit{Assembled hardware}} \\
+Door scan opens session  & Passed & Lock released, session created \\
+Cabinet opens for same person & Passed & Released inside the session \\
+One-time code shown      & Passed & Displayed on opening \\
+Borrow record needs code & Passed & Refused without it \\
+Tailgating refused       & Passed & No session, cabinet stayed shut \\
+Expired session refused  & Passed & Cabinet stayed shut \\
+Refusals recorded        & Passed & Written to the trail \\
+\midrule
+\multicolumn{3}{@{}l}{\textit{Not yet quantified}} \\
+Scan time            & [MEASURE] & Works; not timed over trials \\
+Unlock time          & [MEASURE] & Works; not timed over trials \\
+False acceptance rate & [MEASURE] & Needs a controlled trial set \\
+False rejection rate  & [MEASURE] & Needs a controlled trial set \\
+Text messages        & Stand-in only & No real SIM card \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+We found one fault, and we report it instead of quietly fixing it, because it
+shows why testing with real data matters. The server sent all 39 records, but
+the website showed none of them. The reason: the server had learned two new
+kinds of record that the website did not know about. The website checks the
+whole list at once, so one unknown item threw away all 39. The spreadsheet page,
+which checks each row on its own, showed everything. That difference is what
+told us where the fault was. The saved records themselves were never harmed.
+
+\sectionhead{System Requirements}
+
+Table~\ref{tab:reqs} states the requirements the system was designed against,
+separated into what it must do and how it must behave. These are the statements
+the tests above were written to check.
+
+\begin{table}[H]
+\centering
+\caption{What the system must do}
+\label{tab:reqs}
+\linespread{1}\selectfont
+\begin{tabular}{@{}p{10mm}p{100mm}@{}}
+\toprule
+No. & Requirement \\
+\midrule
+\multicolumn{2}{@{}l}{\textit{What it must do}} \\
+F1 & The door opens only for a finger signed up on the door sensor. \\
+F2 & A door scan starts a session for that one person, which ends by itself. \\
+F3 & The cabinet opens only for the person holding a running session. \\
+F4 & Every decision is saved with the person, the reader, and the time. \\
+F5 & The cabinet shows a one-time code, and no borrow record is accepted
+     without it. \\
+F6 & The website shows which readers are working. \\
+\midrule
+\multicolumn{2}{@{}l}{\textit{How it must behave}} \\
+N1 & Readers never decide on their own. \\
+N2 & Fingerprints never leave the sensor. \\
+N3 & Nobody can edit or delete a saved reader record, not even an
+     administrator. \\
+N4 & Each reader has its own password, which can be changed on its own. \\
+N5 & The program must fit in the chip with room to spare. \\
+N6 & The reader must never freeze while the lock is open or a message is
+     showing. \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Every requirement in the table was exercised during testing. F1 to F6 were
+demonstrated on the assembled readers, as recorded in
+Table~\ref{tab:results}. N1, N2 and N4 follow from how the system is built and
+were confirmed by inspection: a reader holds no decision logic, no template
+leaves the sensor, and each reader carries its own credentials. N3 was confirmed
+by attempting to edit a reader record through the interface, which offers no
+route to do so. N5 is measured below. N6 was observed on the hardware, where a
+second finger could be presented while a message was still on screen.
+
+\sectionhead{Performance Analysis}
+
+Performance is examined here in two ways. The first is what the finished program
+demands of the chip, which the build reports exactly. The second is how the
+design sits against systems that have already been measured and published.
+
+\subsectionhead{Use of Chip Resources}
+
+Our program fills about 81 percent of its 1.2 MB space. That meets requirement
+N5, but only just. Adding features later will be limited by this, not by speed
+or memory.
+
+RAM is not a problem, and the reason is a design choice. Fingerprints stay in
+the sensor, so the biggest piece of data never reaches our chip. That turns the
+usual tightest limit on this kind of project into a non-issue. It also answers
+the small-memory warning raised by \textcite{rahman2026}.
+
+Speed is not a problem either. \textcite{espressif2025} rate the chip at 1079.96
+CoreMark, a standard speed score. Our reader only waits on a slow sensor, builds
+a short message, and keeps Wi-Fi alive. Two processors mean the Wi-Fi keeps
+running while the sensor is read.
+
+\subsectionhead{Timing}
+
+Table~\ref{tab:timing} separates the intervals fixed by the design, which are
+known exactly, from those that depend on the sensor and the network and would
+have to be timed over repeated trials.
+
+\begin{table}[H]
+\centering
+\caption{Timings we set, and timings still to be measured}
+\label{tab:timing}
+\begin{tabular}{@{}p{42mm}p{26mm}p{42mm}@{}}
+\toprule
+Interval & Value & Status \\
+\midrule
+Session length        & 120~s     & Set in the server \\
+Checkout code lifetime & 900~s    & Set in the server \\
+Enrollment code lifetime & 300~s  & Set in the server \\
+Door lock stays open  & 3~s       & Set in the reader \\
+Cabinet lock stays open & 4~s     & Set in the reader \\
+Message on screen     & 2.5~s     & Set in the reader \\
+``Still here'' signal & 30~s      & Set in the reader \\
+Scan time             & [MEASURE] & Observed to work; not timed \\
+Unlock time           & [MEASURE] & Observed to work; not timed \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsectionhead{Comparison With Published Systems}
+
+The figures below belong to other people's systems. They are the benchmarks
+this system should be compared against once its own numbers are recorded.
+
+\textcite{alsayaydeh2025} measured a scan at about one second and an unlock at
+five seconds on a setup much like ours. They admitted the wrong person 1.32
+percent of the time and turned away the right person 26.32 percent of the time.
+The second figure is the warning. A system that rejects one honest person in
+four will end up propped open, and a propped door defeats everything behind it.
+
+\textcite{mohammed2025} report a mean authentication time of 235 milliseconds
+and a 68 percent drop in fraudulent access. Their timing is not a fair
+comparison, since their pipeline runs on server-class machines rather than a
+microcontroller. The 68 percent is the relevant figure: it is the scale of
+improvement that checking twice is expected to deliver, and the effect the
+door-to-cabinet sequence is built to reproduce.
+
+Two properties of this system have no counterpart in either study. Refusals are
+recorded as carefully as approvals, so tailgating attempts become a countable
+quantity rather than an assumption, and the refusal tests above confirm those
+records are written. Reader events are also append-only by construction, which
+is the accountability property \textcite{koisser2023} argue a record must have
+before it can be used as evidence.
